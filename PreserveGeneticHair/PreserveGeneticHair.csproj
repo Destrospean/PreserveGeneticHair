@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PreserveGeneticHair.cs" />
+    <Compile Include="SimHairData.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib">
@@ -90,4 +91,11 @@
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\MonoPatcher\MonoPatcher\MonoPatcher.csproj">
+      <Project>{91460F7B-9C23-4A43-AB52-95EAC8D52D93}</Project>
+      <Name>MonoPatcher</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
