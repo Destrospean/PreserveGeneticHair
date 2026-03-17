@@ -6,7 +6,7 @@ using Sims3.SimIFace;
 
 namespace Destrospean.PreserveGeneticHair
 {
-    public class Replacements
+    public static class Replacements
     {
         [ReplaceMethod(typeof(Genetics), "InheritHairColor")]
         public static Color[] InheritHairColor(Sims3.SimIFace.CAS.SimBuilder target, SimDescription[] parentSims, System.Random rnd)

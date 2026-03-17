@@ -12,16 +12,6 @@ namespace Destrospean.PreserveGeneticHair
 
             Action[] mActions = null;
 
-            public static void Start(Action PerformAction)
-            {
-                Simulator.AddObject(new TaskGenericAction(PerformAction));
-            }
-
-            public static void StartArray(Action[] PerformActions)
-            {
-                Simulator.AddObject(new TaskGenericAction(PerformActions));
-            }
-
             public TaskGenericAction(Action PerformAction)
             {
                 mAction = PerformAction;
@@ -55,6 +45,16 @@ namespace Destrospean.PreserveGeneticHair
                 {
                     Sims3.SimIFace.Simulator.DestroyObject(base.ObjectId);
                 }
+            }
+
+            public static void Start(Action PerformAction)
+            {
+                Simulator.AddObject(new TaskGenericAction(PerformAction));
+            }
+
+            public static void StartArray(Action[] PerformActions)
+            {
+                Simulator.AddObject(new TaskGenericAction(PerformActions));
             }
         }
     }
