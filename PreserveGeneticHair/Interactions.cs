@@ -23,15 +23,15 @@ namespace Destrospean.PreserveGeneticHair
                     return Localization.LocalizeString(actor.IsFemale, kLocalizationPath + "/RemoveHairDye:Name");
                 }
 
-                public override bool Test(Sim a, IMirror target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
+                public override bool Test(Sim actor, IMirror target, bool isAutonomous, ref GreyedOutTooltipCallback greyedOutTooltipCallback)
                 {
-                    if (a.CurrentOutfitCategory == OutfitCategories.Singed || a.SimDescription.IsUsingMaternityOutfits || a.SimDescription.Age == CASAgeGenderFlags.Baby || a.OccultManager.DisallowClothesChange())
+                    if (actor.CurrentOutfitCategory == OutfitCategories.Singed || actor.SimDescription.IsUsingMaternityOutfits || actor.SimDescription.Age == CASAgeGenderFlags.Baby || actor.OccultManager.DisallowClothesChange())
                     {
                         return false;
                     }
-                    if (a.BuffManager.HasTransformBuff())
+                    if (actor.BuffManager.HasTransformBuff())
                     {
-                        greyedOutTooltipCallback = InteractionInstance.CreateTooltipCallback(Localization.LocalizeString(a.IsFemale, "Gameplay/Buffs/BuffTransformation:CantChangeClothesTooltip", a));
+                        greyedOutTooltipCallback = InteractionInstance.CreateTooltipCallback(Localization.LocalizeString(actor.IsFemale, "Gameplay/Buffs/BuffTransformation:CantChangeClothesTooltip", actor));
                         return false;
                     }
                     return true;
