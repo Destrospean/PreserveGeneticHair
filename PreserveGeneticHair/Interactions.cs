@@ -16,6 +16,8 @@ namespace Destrospean.PreserveGeneticHair
 
         public class RemoveHairDye : Interaction<Sim, IMirror>
         {
+            public static InteractionDefinition Singleton = new Definition();
+
             public class Definition : InteractionDefinition<Sim, IMirror, RemoveHairDye>
             {
                 public override string GetInteractionName(Sim actor, IMirror target, Sims3.Gameplay.Autonomy.InteractionObjectPair interaction)
@@ -37,8 +39,6 @@ namespace Destrospean.PreserveGeneticHair
                     return true;
                 }
             }
-
-            public static InteractionDefinition Singleton = new Definition();
 
             public static void ApplyGeneticHairColorsToOutfit(SimDescription simDescription, OutfitCategories outfitCategory, int outfitIndex)
             {
