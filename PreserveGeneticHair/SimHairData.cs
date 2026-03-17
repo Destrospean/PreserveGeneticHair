@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Sims3.Gameplay.CAS;
 using Sims3.SimIFace;
 

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using MonoPatcherLib;
 using Sims3.Gameplay.Actors;
-using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.EventSystem;
-using Sims3.Gameplay.Socializing;
+using Sims3.Gameplay.Objects.Decorations;
 using Sims3.SimIFace;
 
 namespace System.Runtime.CompilerServices
@@ -18,14 +16,26 @@ namespace System.Runtime.CompilerServices
 namespace Destrospean.PreserveGeneticHair
 {
     [Plugin]
-    public class PreserveGeneticHair
+    public class Main
     {
         static EventListener sSimDescriptionDisposedListener, sSimInstantiatedListener, sSimSelectedListener;
 
-        static PreserveGeneticHair()
+        static Main()
         {
+            World.sOnObjectPlacedInLotEventHandler += (sender, e) =>
+                {
+                    World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
+                    if (onObjectPlacedInLotEventArgs != null)
+                    {
+                        AddInteractions(Sims3.Gameplay.Abstracts.GameObject.GetObject(onObjectPlacedInLotEventArgs.ObjectId) as Mirror);
+                    }
+                };
             World.sOnWorldLoadFinishedEventHandler += (sender, e) =>
                 {
+                    foreach (Mirror mirror in Sims3.Gameplay.Queries.GetObjects<Mirror>())
+                    {
+                        AddInteractions(mirror);
+                    }
                     sSimDescriptionDisposedListener = EventTracker.AddListener(EventTypeId.kSimDescriptionDisposed, evt =>
                         {
                             try
@@ -97,61 +107,12 @@ namespace Destrospean.PreserveGeneticHair
                 };
         }
 
-        [ReplaceMethod(typeof(Genetics), "InheritHairColor")]
-        public static Color[] InheritHairColor(Sims3.SimIFace.CAS.SimBuilder target, SimDescription[] parentSims, Random rnd)
+        static void AddInteractions(Mirror mirror)
         {
-            List<Genealogy> genealogies = new List<Genealogy>();
-            foreach (SimDescription parentSim in parentSims)
+            if (!mirror.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.RemoveHairDye.Singleton.GetType()))
             {
-                if (parentSim.Genealogy != null)
-                {
-                    genealogies.Add(parentSim.Genealogy);
-                }
+                mirror.AddInteraction(Interactions.RemoveHairDye.Singleton);
             }
-            if (genealogies.Count == 0)
-            {
-                return Genetics.GeneticColors[rnd.Next(Genetics.GeneticColors.Length)] as Color[];
-            }
-            if (genealogies.Count == 1)
-            {
-                genealogies.Add(genealogies[0]);
-            }
-            List<Genealogy> parentGenealogies = new List<Genealogy>();
-            foreach (Genealogy genealogy in genealogies)
-            {
-                foreach (Genealogy parent in genealogy.Parents)
-                {
-                    if (parent.SimDescription != null)
-                    {
-                        parentGenealogies.Add(parent);
-                    }
-                }
-            }
-            if ((float)rnd.NextDouble() * 100 < Genetics.kMutateHairColorChance)
-            {
-                return Genetics.GeneticColors[rnd.Next(Genetics.GeneticColors.Length)] as Color[];
-            }
-            SimDescription simDescription;
-            if (parentGenealogies.Count > 0 && (float)rnd.NextDouble() * 100 < Genetics.kHairColorChooseGrandparentChance)
-            {
-                simDescription = parentGenealogies[rnd.Next(0, parentGenealogies.Count)].SimDescription;
-            }
-            else
-            {
-                simDescription = genealogies[rnd.Next(0, genealogies.Count)].SimDescription;
-            }
-            Color[] colors = new Color[10];
-            for (int i = 0; i < 4; i++)
-            {
-                colors[i] = simDescription.GetOriginalHairColors()[i].Genetic;
-            }
-            colors[4] = simDescription.GetOriginalEyebrowColor().Genetic;
-            for (int i = 0; i < 4; i++)
-            {
-                colors[i + 5] = simDescription.GetOriginalFacialHairColors()[i].Genetic;
-            }
-            colors[9] = simDescription.GetOriginalBodyHairColor().Genetic;
-            return colors;
         }
     }
 }
