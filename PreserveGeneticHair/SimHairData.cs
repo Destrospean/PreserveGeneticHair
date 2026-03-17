@@ -134,18 +134,18 @@ namespace Destrospean.PreserveGeneticHair
             return OriginalHairColors.TryGetValue(simDescription.SimDescriptionId, out originalColors) ? originalColors : (OriginalHairColors[simDescription.SimDescriptionId] = simDescription.HairColors);
         }
 
+        public static bool HasOriginalHairColors(this SimDescription simDescription)
+        {
+            int tempIndex = 0;
+            return simDescription.GetOriginalBodyHairColor().ActiveColor == simDescription.BodyHairColor.ActiveColor && simDescription.GetOriginalEyebrowColor().ActiveColor == simDescription.EyebrowColor.ActiveColor && System.Array.TrueForAll(simDescription.GetOriginalFacialHairColors(), x => x.ActiveColor == simDescription.FacialHairColors[tempIndex++].ActiveColor) && System.Array.TrueForAll(simDescription.GetOriginalHairColors(), x => x.ActiveColor == simDescription.HairColors[tempIndex++ - simDescription.FacialHairColors.Length].ActiveColor);
+        }
+
         public static void InitOriginalHairColors(this SimDescription simDescription)
         {
             simDescription.GetOriginalBodyHairColor();
             simDescription.GetOriginalEyebrowColor();
             simDescription.GetOriginalFacialHairColors();
             simDescription.GetOriginalHairColors();
-        }
-
-        public static bool HasOriginalHairColors(this SimDescription simDescription)
-        {
-            int tempIndex = 0;
-            return simDescription.GetOriginalBodyHairColor().ActiveColor == simDescription.BodyHairColor.ActiveColor && simDescription.GetOriginalEyebrowColor().ActiveColor == simDescription.EyebrowColor.ActiveColor && System.Array.TrueForAll(simDescription.GetOriginalFacialHairColors(), x => x.ActiveColor == simDescription.FacialHairColors[tempIndex++].ActiveColor) && System.Array.TrueForAll(simDescription.GetOriginalHairColors(), x => x.ActiveColor == simDescription.HairColors[tempIndex++ - simDescription.FacialHairColors.Length].ActiveColor);
         }
     }
 }
