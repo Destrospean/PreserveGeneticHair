@@ -43,10 +43,7 @@ namespace Destrospean.PreserveGeneticHair
                                 Sim sim = evt.TargetObject as Sim;
                                 if (sim != null)
                                 {
-                                    SimHairData.OriginalBodyHairColors.Remove(sim.SimDescription.SimDescriptionId);
-                                    SimHairData.OriginalEyebrowColors.Remove(sim.SimDescription.SimDescriptionId);
-                                    SimHairData.OriginalFacialHairColors.Remove(sim.SimDescription.SimDescriptionId);
-                                    SimHairData.OriginalHairColors.Remove(sim.SimDescription.SimDescriptionId);
+                                    sim.SimDescription.ClearOriginalHairColors();
                                 }
                             }
                             catch (Exception ex)
@@ -62,10 +59,7 @@ namespace Destrospean.PreserveGeneticHair
                                 Sim sim = evt.TargetObject as Sim;
                                 if (sim != null)
                                 {
-                                    sim.SimDescription.GetOriginalBodyHairColor();
-                                    sim.SimDescription.GetOriginalEyebrowColor();
-                                    sim.SimDescription.GetOriginalFacialHairColors();
-                                    sim.SimDescription.GetOriginalHairColors();
+                                    sim.SimDescription.InitOriginalHairColors();
                                 }
                             }
                             catch (Exception ex)
@@ -82,10 +76,7 @@ namespace Destrospean.PreserveGeneticHair
                                 {
                                     foreach (Sim sim in Sims3.Gameplay.Queries.GetObjects<Sim>())
                                     {
-                                        sim.SimDescription.GetOriginalBodyHairColor();
-                                        sim.SimDescription.GetOriginalEyebrowColor();
-                                        sim.SimDescription.GetOriginalFacialHairColors();
-                                        sim.SimDescription.GetOriginalHairColors();
+                                        sim.SimDescription.InitOriginalHairColors();
                                     }
                                 }
                             }
@@ -101,8 +92,8 @@ namespace Destrospean.PreserveGeneticHair
                     EventTracker.RemoveListener(sSimDescriptionDisposedListener);
                     EventTracker.RemoveListener(sSimInstantiatedListener);
                     EventTracker.RemoveListener(sSimSelectedListener);
-                    sSimInstantiatedListener = null;
                     sSimDescriptionDisposedListener = null;
+                    sSimInstantiatedListener = null;
                     sSimSelectedListener = null;
                 };
         }

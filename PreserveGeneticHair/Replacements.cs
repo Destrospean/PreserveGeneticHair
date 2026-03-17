@@ -9,7 +9,7 @@ namespace Destrospean.PreserveGeneticHair
     public static class Replacements
     {
         [ReplaceMethod(typeof(Genetics), "InheritHairColor")]
-        public static Color[] InheritHairColor(Sims3.SimIFace.CAS.SimBuilder target, SimDescription[] parentSims, System.Random rnd)
+        public static Color[] InheritHairColor(Sims3.SimIFace.CAS.SimBuilder target, SimDescription[] parentSims, System.Random random)
         {
             List<Genealogy> genealogies = new List<Genealogy>();
             foreach (SimDescription parentSim in parentSims)
@@ -21,7 +21,7 @@ namespace Destrospean.PreserveGeneticHair
             }
             if (genealogies.Count == 0)
             {
-                return Genetics.GeneticColors[rnd.Next(Genetics.GeneticColors.Length)] as Color[];
+                return Genetics.GeneticColors[random.Next(Genetics.GeneticColors.Length)] as Color[];
             }
             if (genealogies.Count == 1)
             {
@@ -38,18 +38,18 @@ namespace Destrospean.PreserveGeneticHair
                     }
                 }
             }
-            if ((float)rnd.NextDouble() * 100 < Genetics.kMutateHairColorChance)
+            if ((float)random.NextDouble() * 100 < Genetics.kMutateHairColorChance)
             {
-                return Genetics.GeneticColors[rnd.Next(Genetics.GeneticColors.Length)] as Color[];
+                return Genetics.GeneticColors[random.Next(Genetics.GeneticColors.Length)] as Color[];
             }
             SimDescription simDescription;
-            if (parentGenealogies.Count > 0 && (float)rnd.NextDouble() * 100 < Genetics.kHairColorChooseGrandparentChance)
+            if (parentGenealogies.Count > 0 && (float)random.NextDouble() * 100 < Genetics.kHairColorChooseGrandparentChance)
             {
-                simDescription = parentGenealogies[rnd.Next(0, parentGenealogies.Count)].SimDescription;
+                simDescription = parentGenealogies[random.Next(0, parentGenealogies.Count)].SimDescription;
             }
             else
             {
-                simDescription = genealogies[rnd.Next(0, genealogies.Count)].SimDescription;
+                simDescription = genealogies[random.Next(0, genealogies.Count)].SimDescription;
             }
             Color[] colors = new Color[10];
             for (int i = 0; i < 4; i++)
