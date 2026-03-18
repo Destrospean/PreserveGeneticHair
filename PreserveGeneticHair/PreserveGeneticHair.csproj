@@ -50,6 +50,7 @@
     <Compile Include="Tasks.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Replacements.cs" />
+    <Compile Include="Tuning.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib">

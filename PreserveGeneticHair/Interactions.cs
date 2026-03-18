@@ -1,8 +1,10 @@
 ﻿using Sims3.Gameplay.Actors;
+using Sims3.Gameplay.Autonomy;
 using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace.CAS;
+using Tuning = Sims3.Gameplay.Destrospean.PreserveGeneticHair;
 
 namespace Destrospean.PreserveGeneticHair
 {
@@ -14,11 +16,13 @@ namespace Destrospean.PreserveGeneticHair
         {
             public static InteractionDefinition Singleton = new Definition();
 
+            public const string sLocalizationKey = kLocalizationPath + "/RemoveHairDye";
+
             public class Definition : InteractionDefinition<Sim, IMirror, RemoveHairDye>
             {
-                public override string GetInteractionName(Sim actor, IMirror target, Sims3.Gameplay.Autonomy.InteractionObjectPair interaction)
+                public override string GetInteractionName(Sim actor, IMirror target, InteractionObjectPair interaction)
                 {
-                    return Localization.LocalizeString(actor.IsFemale, kLocalizationPath + "/RemoveHairDye:Name");
+                    return Localization.LocalizeString(actor.IsFemale, sLocalizationKey + ":Name");
                 }
 
                 public override bool Test(Sim actor, IMirror target, bool isAutonomous, ref Sims3.SimIFace.GreyedOutTooltipCallback greyedOutTooltipCallback)
@@ -52,6 +56,34 @@ namespace Destrospean.PreserveGeneticHair
                 }
                 Actor.SimDescription.ApplyOriginalHairColorsToAllOutfits();
                 StandardExit();
+                return true;
+            }
+        }
+
+        public class ResetOriginalHair : ImmediateInteraction<Sim, Sim>
+        {
+            public static InteractionDefinition Singleton = new Definition();
+
+            public const string sLocalizationKey = kLocalizationPath + "/ResetOriginalHair";
+
+            [DoesntRequireTuning]
+            public class Definition : ImmediateInteractionDefinition<Sim, Sim, ResetOriginalHair>
+            {
+                public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair interaction)
+                {
+                    return Localization.LocalizeString(target.IsFemale, sLocalizationKey + ":Name");
+                }
+
+                public override bool Test(Sim actor, Sim target, bool isAutonomous, ref Sims3.SimIFace.GreyedOutTooltipCallback greyedOutTooltipCallback)
+                {
+                    return Tuning.kShowCheatInteractions;
+                }
+            }
+
+            public override bool Run()
+            {
+                Actor.SimDescription.ClearOriginalHairColors();
+                Actor.SimDescription.InitOriginalHairColors();
                 return true;
             }
         }

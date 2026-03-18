@@ -36,6 +36,10 @@ namespace Destrospean.PreserveGeneticHair
                     {
                         AddInteractions(mirror);
                     }
+                    foreach (Sim sim in Sims3.Gameplay.Queries.GetObjects<Sim>())
+                    {
+                        AddInteractions(sim);
+                    }
                     sSimDescriptionDisposedListener = EventTracker.AddListener(EventTypeId.kSimDescriptionDisposed, evt =>
                         {
                             try
@@ -59,6 +63,7 @@ namespace Destrospean.PreserveGeneticHair
                                 Sim sim = evt.TargetObject as Sim;
                                 if (sim != null)
                                 {
+                                    AddInteractions(sim);
                                     sim.SimDescription.InitOriginalHairColors();
                                 }
                             }
@@ -103,6 +108,14 @@ namespace Destrospean.PreserveGeneticHair
             if (!mirror.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.RemoveHairDye.Singleton.GetType()))
             {
                 mirror.AddInteraction(Interactions.RemoveHairDye.Singleton);
+            }
+        }
+
+        static void AddInteractions(Sim sim)
+        {
+            if (!sim.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.ResetOriginalHair.Singleton.GetType()))
+            {
+                sim.AddInteraction(Interactions.ResetOriginalHair.Singleton);
             }
         }
     }
