@@ -127,7 +127,7 @@ namespace Destrospean.PreserveGeneticHair
             return simDescription.GetOriginalBodyHairColor().ActiveColor == simDescription.BodyHairColor.ActiveColor && simDescription.GetOriginalEyebrowColor().ActiveColor == simDescription.EyebrowColor.ActiveColor && System.Array.TrueForAll(simDescription.GetOriginalFacialHairColors(), x => x.ActiveColor == simDescription.FacialHairColors[tempIndex++].ActiveColor) && System.Array.TrueForAll(simDescription.GetOriginalHairColors(), x => x.ActiveColor == simDescription.HairColors[tempIndex++ - simDescription.FacialHairColors.Length].ActiveColor);
         }
 
-        public static bool HasRootsShowing(this SimDescription simDescription, bool? value)
+        public static bool HasRootsShowing(this SimDescription simDescription, bool? value = null)
         {
             if (value.HasValue)
             {
