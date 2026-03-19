@@ -25,7 +25,7 @@ namespace Destrospean.PreserveGeneticHair
         {
             SimHairGrowth.StateChanged += (sender, e) =>
                 {
-                    foreach (Sims3.SimIFace.CAS.OutfitCategories outfitCategory in e.SimDescription.ListOfCategories)
+                    foreach (OutfitCategories outfitCategory in e.SimDescription.ListOfCategories)
                     {
                         for (int i = 0; i < e.SimDescription.GetOutfitCount(outfitCategory); i++)
                         {
