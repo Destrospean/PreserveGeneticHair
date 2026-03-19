@@ -24,6 +24,10 @@ namespace Destrospean.PreserveGeneticHair
         {
             SimHairGrowth.StateChanged += (sender, e) =>
                 {
+                    if ((e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0)
+                    {
+                        e.SimDescription.HasRootsShowing(true);
+                    }
                 };
             World.sOnObjectPlacedInLotEventHandler += (sender, e) =>
                 {

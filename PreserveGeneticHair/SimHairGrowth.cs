@@ -43,7 +43,12 @@ namespace Destrospean.PreserveGeneticHair
 
         public class StateChangedEventArgs : System.EventArgs
         {
-            public HairGrowthStates HairGrowthState
+            public HairGrowthStateChangeFlags Flags
+            {
+                get;
+            }
+
+            public HairGrowthStates State
             {
                 get;
             }
@@ -53,18 +58,19 @@ namespace Destrospean.PreserveGeneticHair
                 get;
             }
 
-            public StateChangedEventArgs(SimDescription simDescription, HairGrowthStates hairGrowthState)
+            public StateChangedEventArgs(SimDescription simDescription, HairGrowthStates hairGrowthState, HairGrowthStateChangeFlags flags)
             {
-                HairGrowthState = hairGrowthState;
+                Flags = flags;
+                State = hairGrowthState;
                 SimDescription = simDescription;
             }
 
-            public StateChangedEventArgs(SimDescription simDescription, int hairGrowthState) : this(simDescription, (HairGrowthStates)hairGrowthState)
+            public StateChangedEventArgs(SimDescription simDescription, int hairGrowthState, HairGrowthStateChangeFlags flags) : this(simDescription, (HairGrowthStates)hairGrowthState, flags)
             {
             }
         }
 
-        public static bool DecrementHairGrowthState(this SimDescription simDescription, int by = 1)
+        public static bool DecrementHairGrowthState(this SimDescription simDescription, int by = 1, bool haircut = false, HairGrowthStateChangeFlags additionalFlags = 0)
         {
             if (by < 1)
             {
@@ -73,7 +79,7 @@ namespace Destrospean.PreserveGeneticHair
             int newHairGrowthState = (int)simDescription.GetHairGrowthState() + by;
             if (newHairGrowthState < System.Enum.GetValues(typeof(HairGrowthStates)).Length - 1)
             {
-                simDescription.SetHairGrowthState(newHairGrowthState);
+                simDescription.SetHairGrowthState(newHairGrowthState, (haircut ? HairGrowthStateChangeFlags.Haircut : HairGrowthStateChangeFlags.Default) | additionalFlags);
                 return true;
             }
             return false;
@@ -95,7 +101,7 @@ namespace Destrospean.PreserveGeneticHair
             return 0;
         }
 
-        public static bool IncrementHairGrowthState(this SimDescription simDescription, int by = 1)
+        public static bool IncrementHairGrowthState(this SimDescription simDescription, int by = 1, bool naturalGrowth = false, HairGrowthStateChangeFlags additionalFlags = 0)
         {
             if (by < 1)
             {
@@ -104,7 +110,7 @@ namespace Destrospean.PreserveGeneticHair
             int newHairGrowthState = (int)simDescription.GetHairGrowthState() - by;
             if (newHairGrowthState > 0)
             {
-                simDescription.SetHairGrowthState(newHairGrowthState);
+                simDescription.SetHairGrowthState(newHairGrowthState, (naturalGrowth ? HairGrowthStateChangeFlags.NaturalGrowth : HairGrowthStateChangeFlags.Default) | additionalFlags);
                 return true;
             }
             return false;
@@ -115,15 +121,15 @@ namespace Destrospean.PreserveGeneticHair
             StateChanged.Invoke(simDescription, e);
         }
 
-        public static void SetHairGrowthState(this SimDescription simDescription, HairGrowthStates hairGrowthState)
+        public static void SetHairGrowthState(this SimDescription simDescription, HairGrowthStates hairGrowthState, HairGrowthStateChangeFlags flags = 0)
         {
             SimHairData.GrowthStates[simDescription.SimDescriptionId] = hairGrowthState;
-            simDescription.OnHairGrowthStateChanged(new StateChangedEventArgs(simDescription, hairGrowthState));
+            simDescription.OnHairGrowthStateChanged(new StateChangedEventArgs(simDescription, hairGrowthState, flags));
         }
 
-        public static void SetHairGrowthState(this SimDescription simDescription, int hairGrowthState)
+        public static void SetHairGrowthState(this SimDescription simDescription, int hairGrowthState, HairGrowthStateChangeFlags flags = 0)
         {
-            simDescription.SetHairGrowthState((HairGrowthStates)hairGrowthState);
+            simDescription.SetHairGrowthState((HairGrowthStates)hairGrowthState, flags);
         }
     }
 }

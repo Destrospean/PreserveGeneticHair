@@ -20,5 +20,8 @@ namespace Destrospean.PreserveGeneticHair
 
         [PersistableStatic(true)]
         public static Dictionary<ulong, GeneticColor[]> OriginalHairColors = new Dictionary<ulong, GeneticColor[]>();
+
+        [PersistableStatic(true)]
+        public static Dictionary<ulong, bool> RootsShowing = new Dictionary<ulong, bool>();
     }
 }

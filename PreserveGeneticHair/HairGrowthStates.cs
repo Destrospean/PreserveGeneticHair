@@ -9,4 +9,12 @@
         Long,
         VeryLong
     }
+
+    [System.Flags]
+    public enum HairGrowthStateChangeFlags
+    {
+        Default,
+        Haircut,
+        NaturalGrowth
+    }
 }
