@@ -4,6 +4,7 @@ using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Objects.Decorations;
 using Sims3.SimIFace;
+using Sims3.SimIFace.CAS;
 
 namespace System.Runtime.CompilerServices
 {
@@ -24,6 +25,17 @@ namespace Destrospean.PreserveGeneticHair
         {
             SimHairGrowth.StateChanged += (sender, e) =>
                 {
+                    foreach (Sims3.SimIFace.CAS.OutfitCategories outfitCategory in e.SimDescription.ListOfCategories)
+                    {
+                        for (int i = 0; i < e.SimDescription.GetOutfitCount(outfitCategory); i++)
+                        {
+                            HairGrowthStates hairGrowthState;
+                            if (SimHairGrowth.StateCASPartKeyMap.TryGetValue(Array.Find(e.SimDescription.GetOutfit(outfitCategory, i).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState) && hairGrowthState > e.SimDescription.GetHairGrowthState())
+                            {
+                                // <code to change hairstyle to one of the right growth state here>
+                            }
+                        }
+                    }
                     int tempIndex = 0;
                     if (!e.SimDescription.HasRootsShowing() && (e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0 && Array.Exists(e.SimDescription.GetOriginalHairColors(), x => x.ActiveColor != e.SimDescription.HairColors[tempIndex++].ActiveColor))
                     {

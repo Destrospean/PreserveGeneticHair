@@ -85,14 +85,14 @@ namespace Destrospean.PreserveGeneticHair
             return false;
         }
 
-        public static HairGrowthStates GetHairGrowthState(this SimDescription simDescription)
+        public static HairGrowthStates GetHairGrowthState(this SimDescription simDescription, OutfitCategories? outfitCategory = null, int? outfitIndex = null)
         {
             HairGrowthStates hairGrowthState;
             if (SimHairData.GrowthStates.TryGetValue(simDescription.SimDescriptionId, out hairGrowthState))
             {
                 return hairGrowthState;
             }
-            if (StateCASPartKeyMap.TryGetValue(System.Array.Find(simDescription.GetOutfit(OutfitCategories.Everyday, 0).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState))
+            if (StateCASPartKeyMap.TryGetValue(System.Array.Find(simDescription.GetOutfit(outfitCategory == null ? simDescription.CreatedSim == null ? OutfitCategories.Everyday : simDescription.CreatedSim.CurrentOutfitCategory : outfitCategory.Value, outfitIndex == null ? simDescription.CreatedSim == null ? 0 : simDescription.CreatedSim.CurrentOutfitIndex : outfitIndex.Value).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState))
             {
                 simDescription.SetHairGrowthState(hairGrowthState);
                 return hairGrowthState;
