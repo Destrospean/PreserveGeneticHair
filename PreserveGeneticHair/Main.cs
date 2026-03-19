@@ -42,7 +42,6 @@ namespace Destrospean.PreserveGeneticHair
                     {
                         AddInteractions(sim);
                     }
-                    ;
                     SimHairGrowth.StateChanged += sSimHairGrowthStateChangedHandler = (o, args) =>
                         {
                         };
