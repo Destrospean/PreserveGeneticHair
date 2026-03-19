@@ -24,7 +24,8 @@ namespace Destrospean.PreserveGeneticHair
         {
             SimHairGrowth.StateChanged += (sender, e) =>
                 {
-                    if ((e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0)
+                    int tempIndex = 0;
+                    if ((e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0 && Array.Exists(e.SimDescription.GetOriginalHairColors(), x => x.ActiveColor != e.SimDescription.HairColors[tempIndex++].ActiveColor))
                     {
                         e.SimDescription.HasRootsShowing(true);
                     }
