@@ -42,10 +42,10 @@ namespace Destrospean.PreserveGeneticHair
                     {
                         AddInteractions(sim);
                     }
-                    sSimHairGrowthStateChangedHandler = (o, args) =>
+                    ;
+                    SimHairGrowth.StateChanged += sSimHairGrowthStateChangedHandler = (o, args) =>
                         {
                         };
-                    SimHairGrowth.StateChanged += sSimHairGrowthStateChangedHandler;
                     sSimDescriptionDisposedListener = EventTracker.AddListener(EventTypeId.kSimDescriptionDisposed, evt =>
                         {
                             try
