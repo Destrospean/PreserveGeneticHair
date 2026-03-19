@@ -1,5 +1,13 @@
 ﻿namespace Destrospean.PreserveGeneticHair
 {
+    [System.Flags]
+    public enum HairGrowthStateChangeFlags
+    {
+        Default,
+        Haircut,
+        NaturalGrowth
+    }
+
     public enum HairGrowthStates
     {
         Bald,
@@ -8,13 +16,5 @@
         Medium,
         Long,
         VeryLong
-    }
-
-    [System.Flags]
-    public enum HairGrowthStateChangeFlags
-    {
-        Default,
-        Haircut,
-        NaturalGrowth
     }
 }
