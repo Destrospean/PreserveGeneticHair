@@ -70,7 +70,7 @@ namespace Destrospean.PreserveGeneticHair
             }
         }
 
-        public static bool DecrementHairGrowthState(this SimDescription simDescription, int by = 1, bool haircut = false, HairGrowthStateChangeFlags additionalFlags = 0)
+        public static bool DecrementHairGrowthState(this SimDescription simDescription, int by = 1, bool haircut = true, HairGrowthStateChangeFlags additionalFlags = 0)
         {
             if (by < 1)
             {
@@ -101,7 +101,7 @@ namespace Destrospean.PreserveGeneticHair
             return 0;
         }
 
-        public static bool IncrementHairGrowthState(this SimDescription simDescription, int by = 1, bool naturalGrowth = false, HairGrowthStateChangeFlags additionalFlags = 0)
+        public static bool IncrementHairGrowthState(this SimDescription simDescription, int by = 1, bool naturalGrowth = true, HairGrowthStateChangeFlags additionalFlags = 0)
         {
             if (by < 1)
             {
