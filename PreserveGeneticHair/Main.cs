@@ -20,10 +20,11 @@ namespace Destrospean.PreserveGeneticHair
     {
         static EventListener sSimDescriptionDisposedListener, sSimInstantiatedListener, sSimSelectedListener;
 
-        static EventHandler<SimHairGrowth.StateChangedEventArgs> sSimHairGrowthStateChangedHandler;
-
         static Main()
         {
+            SimHairGrowth.StateChanged += (sender, e) =>
+                {
+                };
             World.sOnObjectPlacedInLotEventHandler += (sender, e) =>
                 {
                     World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
@@ -42,9 +43,6 @@ namespace Destrospean.PreserveGeneticHair
                     {
                         AddInteractions(sim);
                     }
-                    SimHairGrowth.StateChanged += sSimHairGrowthStateChangedHandler = (o, args) =>
-                        {
-                        };
                     sSimDescriptionDisposedListener = EventTracker.AddListener(EventTypeId.kSimDescriptionDisposed, evt =>
                         {
                             try
@@ -102,9 +100,7 @@ namespace Destrospean.PreserveGeneticHair
                     EventTracker.RemoveListener(sSimDescriptionDisposedListener);
                     EventTracker.RemoveListener(sSimInstantiatedListener);
                     EventTracker.RemoveListener(sSimSelectedListener);
-                    SimHairGrowth.StateChanged -= sSimHairGrowthStateChangedHandler;
                     sSimDescriptionDisposedListener = null;
-                    sSimHairGrowthStateChangedHandler = null;
                     sSimInstantiatedListener = null;
                     sSimSelectedListener = null;
                 };
