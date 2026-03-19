@@ -7,7 +7,7 @@ namespace Destrospean.PreserveGeneticHair
 {
     public static class SimHairGrowth
     {
-        public static Dictionary<string, HairGrowthStates> HairGrowthStateCASPMap = new Dictionary<string, HairGrowthStates>
+        public static Dictionary<string, HairGrowthStates> GrowthStateCASPMap = new Dictionary<string, HairGrowthStates>
         {
             {
                 "034AEECB:00000000:" + ResourceUtils.HashString64("afHairEP08Hairless"),
@@ -59,7 +59,7 @@ namespace Destrospean.PreserveGeneticHair
                 SimDescription = simDescription;
             }
 
-            public StateChangedEventArgs(SimDescription sim, int hairGrowthState) : this(sim, (HairGrowthStates)hairGrowthState)
+            public StateChangedEventArgs(SimDescription simDescription, int hairGrowthState) : this(simDescription, (HairGrowthStates)hairGrowthState)
             {
             }
         }
@@ -86,7 +86,7 @@ namespace Destrospean.PreserveGeneticHair
             {
                 return hairGrowthState;
             }
-            if (HairGrowthStateCASPMap.TryGetValue(System.Array.Find(simDescription.GetOutfit(OutfitCategories.Everyday, 0).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState))
+            if (GrowthStateCASPMap.TryGetValue(System.Array.Find(simDescription.GetOutfit(OutfitCategories.Everyday, 0).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState))
             {
                 simDescription.SetHairGrowthState(hairGrowthState);
                 return hairGrowthState;
@@ -110,7 +110,7 @@ namespace Destrospean.PreserveGeneticHair
             return false;
         }
 
-        public static void OnSimHairGrowthStateChanged(this SimDescription simDescription, StateChangedEventArgs e)
+        public static void OnHairGrowthStateChanged(this SimDescription simDescription, StateChangedEventArgs e)
         {
             StateChanged.Invoke(simDescription, e);
         }
@@ -118,7 +118,7 @@ namespace Destrospean.PreserveGeneticHair
         public static void SetHairGrowthState(this SimDescription simDescription, HairGrowthStates hairGrowthState)
         {
             SimHairData.HairGrowthStates[simDescription.SimDescriptionId] = hairGrowthState;
-            simDescription.OnSimHairGrowthStateChanged(new StateChangedEventArgs(simDescription, hairGrowthState));
+            simDescription.OnHairGrowthStateChanged(new StateChangedEventArgs(simDescription, hairGrowthState));
         }
 
         public static void SetHairGrowthState(this SimDescription simDescription, int hairGrowthState)
