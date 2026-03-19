@@ -7,7 +7,7 @@ namespace Destrospean.PreserveGeneticHair
 {
     public static class SimHairGrowth
     {
-        public static Dictionary<string, HairGrowthStates> GrowthStateCASPMap = new Dictionary<string, HairGrowthStates>
+        public static Dictionary<string, HairGrowthStates> StateCASPartKeyMap = new Dictionary<string, HairGrowthStates>
         {
             {
                 "034AEECB:00000000:" + ResourceUtils.HashString64("afHairEP08Hairless"),
@@ -82,11 +82,11 @@ namespace Destrospean.PreserveGeneticHair
         public static HairGrowthStates GetHairGrowthState(this SimDescription simDescription)
         {
             HairGrowthStates hairGrowthState;
-            if (SimHairData.HairGrowthStates.TryGetValue(simDescription.SimDescriptionId, out hairGrowthState))
+            if (SimHairData.GrowthStates.TryGetValue(simDescription.SimDescriptionId, out hairGrowthState))
             {
                 return hairGrowthState;
             }
-            if (GrowthStateCASPMap.TryGetValue(System.Array.Find(simDescription.GetOutfit(OutfitCategories.Everyday, 0).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState))
+            if (StateCASPartKeyMap.TryGetValue(System.Array.Find(simDescription.GetOutfit(OutfitCategories.Everyday, 0).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState))
             {
                 simDescription.SetHairGrowthState(hairGrowthState);
                 return hairGrowthState;
@@ -117,7 +117,7 @@ namespace Destrospean.PreserveGeneticHair
 
         public static void SetHairGrowthState(this SimDescription simDescription, HairGrowthStates hairGrowthState)
         {
-            SimHairData.HairGrowthStates[simDescription.SimDescriptionId] = hairGrowthState;
+            SimHairData.GrowthStates[simDescription.SimDescriptionId] = hairGrowthState;
             simDescription.OnHairGrowthStateChanged(new StateChangedEventArgs(simDescription, hairGrowthState));
         }
 
