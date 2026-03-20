@@ -25,6 +25,7 @@ namespace Destrospean.PreserveGeneticHair
         {
             SimHairGrowth.StateChanged += (sender, e) =>
                 {
+                    // Change hairstyles of all outfits to those of the corresponding growth states
                     foreach (OutfitCategories outfitCategory in e.SimDescription.ListOfCategories)
                     {
                         for (int i = 0; i < e.SimDescription.GetOutfitCount(outfitCategory); i++)
@@ -32,10 +33,11 @@ namespace Destrospean.PreserveGeneticHair
                             HairGrowthStates hairGrowthState;
                             if (SimHairGrowth.StateCASPartKeyMap.TryGetValue(Array.Find(e.SimDescription.GetOutfit(outfitCategory, i).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState) && hairGrowthState > e.State)
                             {
-                                // <code to change hairstyle to one of the right growth state here>
+                                // <code to change hairstyle to one of the corresponding growth state here>
                             }
                         }
                     }
+                    // If dyed hair is grown out naturally (not via cheats), enable showing the roots of the original hair color
                     if (!e.SimDescription.HasRootsShowing() && (e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0 && !e.SimDescription.HasOriginalHairColors())
                     {
                         e.SimDescription.HasRootsShowing(true);
