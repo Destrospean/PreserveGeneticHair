@@ -14,7 +14,7 @@ namespace Destrospean.PreserveGeneticHair
             Tip
         }
 
-        public static void ApplyOverallHairColorsToAllOutfits(this SimDescription simDescription, GeneticColor bodyHairColor, GeneticColor eyebrowColor, GeneticColor[] facialHairColors, GeneticColor[] hairColors)
+        public static void ApplyOverallHairColorsToAllOutfits(this SimDescription simDescription, GeneticColor bodyHairColor, GeneticColor eyebrowColor, GeneticColor[] facialHairColors, GeneticColor[] hairColors, bool spin = false)
         {
             simDescription.BodyHairColor = simDescription.GetOriginalBodyHairColor();
             simDescription.EyebrowColor = simDescription.GetOriginalEyebrowColor();
@@ -31,9 +31,16 @@ namespace Destrospean.PreserveGeneticHair
                 simDescription.AddOutfit(new SimOutfit(simDescription.CreatedSim.CurrentOutfit.Key), OutfitCategories.Everyday);
                 simDescription.CreatedSim.SwitchToOutfitWithoutSpin(OutfitCategories.Everyday, tempOutfitIndex);
                 ApplyOverallHairColorsToOutfit(simDescription, lastOutfitCategory, lastOutfitIndex, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
-                using (Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper switchOutfitHelper = new Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper(simDescription.CreatedSim, Sims3.Gameplay.Actors.Sim.ClothesChangeReason.Force, lastOutfitCategory, lastOutfitIndex, false))
+                if (spin)
                 {
-                    simDescription.CreatedSim.SwitchToOutfitWithSpin(switchOutfitHelper);
+                    using (Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper switchOutfitHelper = new Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper(simDescription.CreatedSim, Sims3.Gameplay.Actors.Sim.ClothesChangeReason.Force, lastOutfitCategory, lastOutfitIndex, false))
+                    {
+                        simDescription.CreatedSim.SwitchToOutfitWithSpin(switchOutfitHelper);
+                    }
+                }
+                else
+                {
+                    simDescription.CreatedSim.SwitchToOutfitWithoutSpin(lastOutfitCategory, lastOutfitIndex);
                 }
                 simDescription.RemoveOutfit(OutfitCategories.Everyday, tempOutfitIndex, true);
             }
