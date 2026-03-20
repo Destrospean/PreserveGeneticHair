@@ -16,7 +16,7 @@ namespace Destrospean.PreserveGeneticHair
                 {
                     if (node.Name == "Entry")
                     {
-                        stateCASPartKeyMap[node.Attributes["CASPartKey"].Value] = (HairGrowthStates)System.Enum.Parse(typeof(HairGrowthStates), node.Attributes["CASPartKey"].Value);
+                        stateCASPartKeyMap[node.Attributes["CASPartKey"].Value] = (HairGrowthStates)System.Enum.Parse(typeof(HairGrowthStates), node.Attributes["GrowthState"].Value);
                     }
                 }
                 return stateCASPartKeyMap;
