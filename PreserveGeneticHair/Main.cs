@@ -17,7 +17,7 @@ namespace System.Runtime.CompilerServices
 namespace Destrospean.PreserveGeneticHair
 {
     [Plugin]
-    public class Main
+    public static class Main
     {
         static EventListener sSimDescriptionDisposedListener, sSimInstantiatedListener, sSimSelectedListener;
 
@@ -25,22 +25,29 @@ namespace Destrospean.PreserveGeneticHair
         {
             SimHairGrowth.StateChanged += (sender, e) =>
                 {
-                    // Change hairstyles of all outfits to those of the corresponding growth states
-                    foreach (OutfitCategories outfitCategory in e.SimDescription.ListOfCategories)
+                    try
                     {
-                        for (int i = 0; i < e.SimDescription.GetOutfitCount(outfitCategory); i++)
+                        // Change hairstyles of all outfits to those of the corresponding growth states
+                        foreach (OutfitCategories outfitCategory in e.SimDescription.ListOfCategories)
                         {
-                            HairGrowthStates hairGrowthState;
-                            if (SimHairGrowth.StateCASPartKeyMap.TryGetValue(Array.Find(e.SimDescription.GetOutfit(outfitCategory, i).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState) && hairGrowthState > e.State)
+                            for (int i = 0; i < e.SimDescription.GetOutfitCount(outfitCategory); i++)
                             {
-                                // <code to change hairstyle to one of the corresponding growth state here>
+                                HairGrowthStates outfitHairGrowthState;
+                                if (e.SimDescription.GetOutfit(outfitCategory, i).TryGetHairGrowthState(out outfitHairGrowthState) && outfitHairGrowthState > e.State)
+                                {
+                                    // Insert code to change the hairstyle to one of the corresponding growth state here
+                                }
                             }
                         }
+                        // If dyed hair is grown out naturally (not via cheats), enable showing the roots of the original hair color
+                        if (!e.SimDescription.HasRootsShowing() && (e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0 && !e.SimDescription.HasOriginalHairColors())
+                        {
+                            e.SimDescription.HasRootsShowing(true);
+                        }
                     }
-                    // If dyed hair is grown out naturally (not via cheats), enable showing the roots of the original hair color
-                    if (!e.SimDescription.HasRootsShowing() && (e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0 && !e.SimDescription.HasOriginalHairColors())
+                    catch (Exception ex)
                     {
-                        e.SimDescription.HasRootsShowing(true);
+                        ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
                     }
                 };
             World.sOnObjectPlacedInLotEventHandler += (sender, e) =>
@@ -138,6 +145,11 @@ namespace Destrospean.PreserveGeneticHair
             {
                 sim.AddInteraction(Interactions.ResetOriginalHair.Singleton);
             }
+        }
+
+        public static string ToS3PIFormatKeyString(this ResourceKey key)
+        {
+            return string.Format("0x{0:X8}-0x{1:X8}-0x{2:X16}", key.TypeId, key.GroupId, key.InstanceId);
         }
     }
 }

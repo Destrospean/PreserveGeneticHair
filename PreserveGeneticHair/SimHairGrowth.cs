@@ -7,37 +7,21 @@ namespace Destrospean.PreserveGeneticHair
 {
     public static class SimHairGrowth
     {
-        public static Dictionary<string, HairGrowthStates> StateCASPartKeyMap = new Dictionary<string, HairGrowthStates>
+        public static Dictionary<string, HairGrowthStates> StateCASPartKeyMap
         {
+            get
             {
-                "034AEECB:00000000:" + ResourceUtils.HashString64("afHairEP08Hairless"),
-                HairGrowthStates.Bald
-            },
-            {
-                "034AEECB:00000000:" + ResourceUtils.HashString64("amHairEP08Hairless"),
-                HairGrowthStates.Bald
-            },
-            {
-                "034AEECB:00000000:" + ResourceUtils.HashString64("cfHairEP08Hairless"),
-                HairGrowthStates.Bald
-            },
-            {
-                "034AEECB:00000000:" + ResourceUtils.HashString64("cmHairEP08Hairless"),
-                HairGrowthStates.Bald
-            },
-            {
-                "034AEECB:00000000:" + ResourceUtils.HashString64("efHairEP08Hairless"),
-                HairGrowthStates.Bald
-            },
-            {
-                "034AEECB:00000000:" + ResourceUtils.HashString64("emHairEP08Hairless"),
-                HairGrowthStates.Bald
-            },
-            {
-                "034AEECB:00000000:" + ResourceUtils.HashString64("puHairNone"),
-                HairGrowthStates.Bald
+                Dictionary<string, HairGrowthStates> stateCASPartKeyMap = new Dictionary<string, HairGrowthStates>();
+                foreach (System.Xml.XmlNode node in Simulator.LoadFromResourceKey(new ResourceKey(ResourceUtils.HashString64("HairGrowthStateMap"), 0x333406C, 0)).SelectSingleNode("HairGrowthStateMap").ChildNodes)
+                {
+                    if (node.Name == "Entry")
+                    {
+                        stateCASPartKeyMap[node.Attributes["CASPartKey"].Value] = (HairGrowthStates)System.Enum.Parse(typeof(HairGrowthStates), node.Attributes["CASPartKey"].Value);
+                    }
+                }
+                return stateCASPartKeyMap;
             }
-        };
+        }
 
         public static event System.EventHandler<StateChangedEventArgs> StateChanged;
 
@@ -85,20 +69,40 @@ namespace Destrospean.PreserveGeneticHair
             return false;
         }
 
-        public static HairGrowthStates GetHairGrowthState(this SimDescription simDescription, OutfitCategories? outfitCategory = null, int? outfitIndex = null)
+        public static HairGrowthStates GetHairGrowthState(this SimOutfit outfit)
         {
             HairGrowthStates hairGrowthState;
-            if (SimHairData.GrowthStates.TryGetValue(simDescription.SimDescriptionId, out hairGrowthState))
+            CASPart? part;
+            if (outfit.TryGetHairGrowthState(out hairGrowthState, out part))
             {
                 return hairGrowthState;
             }
-            if (StateCASPartKeyMap.TryGetValue(System.Array.Find(simDescription.GetOutfit(outfitCategory == null ? simDescription.CreatedSim == null ? OutfitCategories.Everyday : simDescription.CreatedSim.CurrentOutfitCategory : outfitCategory.Value, outfitIndex == null ? simDescription.CreatedSim == null ? 0 : simDescription.CreatedSim.CurrentOutfitIndex : outfitIndex.Value).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState))
+            if (part == null)
+            {
+                throw new System.NullReferenceException(string.Format("No CASPart could be found in the specified SimOutfit (Key: {0}).", outfit.Key.ToS3PIFormatKeyString()));
+            }
+            throw new KeyNotFoundException(string.Format("No HairGrowthStates could be found for the specified CASPart (Key: {0}).", part.Value.Key.ToS3PIFormatKeyString()));
+        }
+
+        public static HairGrowthStates GetHairGrowthState(this SimDescription simDescription, OutfitCategories? outfitCategory = null, int? outfitIndex = null)
+        {
+            HairGrowthStates hairGrowthState;
+            if (simDescription.TryGetHairGrowthState(out hairGrowthState))
+            {
+                return hairGrowthState;
+            }
+            SimOutfit outfit;
+            CASPart? part;
+            if ((outfit = simDescription.GetOutfit(outfitCategory ?? (simDescription.CreatedSim == null ? OutfitCategories.Everyday : simDescription.CreatedSim.CurrentOutfitCategory), outfitIndex ?? (simDescription.CreatedSim == null ? 0 : simDescription.CreatedSim.CurrentOutfitIndex))).TryGetHairGrowthState(out hairGrowthState, out part))
             {
                 simDescription.SetHairGrowthState(hairGrowthState);
                 return hairGrowthState;
             }
-            simDescription.SetHairGrowthState(0);
-            return 0;
+            if (part == null)
+            {
+                throw new System.NullReferenceException(string.Format("No CASPart could be found in the specified SimOutfit (Key: {0}).", outfit.Key.ToS3PIFormatKeyString()));
+            }
+            throw new KeyNotFoundException(string.Format("No HairGrowthStates could be found for the Sim (Name: {0}, SimDescriptionId: {1}) or for the specified CASPart (Key: {2}).", simDescription.FullName, simDescription.SimDescriptionId, part.Value.Key.ToS3PIFormatKeyString()));
         }
 
         public static bool IncrementHairGrowthState(this SimDescription simDescription, int by = 1, bool naturalGrowth = true, HairGrowthStateChangeFlags additionalFlags = 0)
@@ -130,6 +134,37 @@ namespace Destrospean.PreserveGeneticHair
         public static void SetHairGrowthState(this SimDescription simDescription, int hairGrowthState, HairGrowthStateChangeFlags flags = 0)
         {
             simDescription.SetHairGrowthState((HairGrowthStates)hairGrowthState, flags);
+        }
+
+        public static bool TryGetHairGrowthState(this SimOutfit outfit, out HairGrowthStates hairGrowthState)
+        {
+            CASPart? part;
+            return outfit.TryGetHairGrowthState(out hairGrowthState, out part);
+        }
+
+        public static bool TryGetHairGrowthState(this SimOutfit outfit, out HairGrowthStates hairGrowthState, out CASPart? part)
+        {
+            CASPart? tempPart = null;
+            if (SimHairGrowth.StateCASPartKeyMap.TryGetValue(System.Array.Find(outfit.Parts, x =>
+                {
+                    if (x.BodyType == BodyTypes.Hair)
+                    {
+                        tempPart = x;
+                        return true;
+                    }
+                    return false;
+                }).Key.ToS3PIFormatKeyString(), out hairGrowthState))
+            {
+                part = tempPart;
+                return true;
+            }
+            part = tempPart;
+            return false;
+        }
+
+        public static bool TryGetHairGrowthState(this SimDescription simDescription, out HairGrowthStates hairGrowthState)
+        {
+            return SimHairData.GrowthStates.TryGetValue(simDescription.SimDescriptionId, out hairGrowthState);
         }
     }
 }
