@@ -32,7 +32,7 @@ namespace Destrospean.PreserveGeneticHair
                             HairGrowthStates hairGrowthState;
                             if (SimHairGrowth.StateCASPartKeyMap.TryGetValue(Array.Find(e.SimDescription.GetOutfit(outfitCategory, i).Parts, x => x.BodyType == BodyTypes.Hair).Key.ToString(), out hairGrowthState) && hairGrowthState > e.SimDescription.GetHairGrowthState())
                             {
-                                // <code to change hairstyle to one of the right growth states here>
+                                // <code to change hairstyle to one of the right growth state here>
                             }
                         }
                     }
