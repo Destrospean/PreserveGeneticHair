@@ -153,7 +153,7 @@ namespace Destrospean.PreserveGeneticHair
             if (value == null)
             {
                 bool rootsShowing;
-                return SimHairData.RootsShowing.TryGetValue(simDescription.SimDescriptionId, out rootsShowing) ? rootsShowing : SimHairData.RootsShowing[simDescription.SimDescriptionId] = false;
+                return !simDescription.HasOriginalHairColors() && SimHairData.RootsShowing.TryGetValue(simDescription.SimDescriptionId, out rootsShowing) ? rootsShowing : SimHairData.RootsShowing[simDescription.SimDescriptionId] = false;
             }
             return SimHairData.RootsShowing[simDescription.SimDescriptionId] = value.Value;
         }
