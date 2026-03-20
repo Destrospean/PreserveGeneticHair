@@ -54,7 +54,7 @@ namespace Destrospean.PreserveGeneticHair
                     StandardExit();
                     return false;
                 }
-                Actor.SimDescription.ApplyOriginalOverallHairColorsToAllOutfits();
+                Actor.SimDescription.ApplyOverallHairColorsToAllOutfits(Actor.SimDescription.GetOriginalBodyHairColor(), Actor.SimDescription.GetOriginalEyebrowColor(), Actor.SimDescription.GetOriginalFacialHairColors(), Actor.SimDescription.GetOriginalHairColors());
                 StandardExit();
                 return true;
             }

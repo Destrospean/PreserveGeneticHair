@@ -6,7 +6,7 @@ namespace Destrospean.PreserveGeneticHair
 {
     public static class SimHairColors
     {
-        public static void ApplyOriginalOverallHairColorsToAllOutfits(this SimDescription simDescription)
+        public static void ApplyOverallHairColorsToAllOutfits(this SimDescription simDescription, GeneticColor bodyHairColor, GeneticColor eyebrowColor, GeneticColor[] facialHairColors, GeneticColor[] hairColors)
         {
             simDescription.BodyHairColor = simDescription.GetOriginalBodyHairColor();
             simDescription.EyebrowColor = simDescription.GetOriginalEyebrowColor();
@@ -22,7 +22,7 @@ namespace Destrospean.PreserveGeneticHair
                 tempOutfitIndex = simDescription.GetOutfitCount(OutfitCategories.Everyday);
                 simDescription.AddOutfit(new SimOutfit(simDescription.CreatedSim.CurrentOutfit.Key), OutfitCategories.Everyday);
                 simDescription.CreatedSim.SwitchToOutfitWithoutSpin(OutfitCategories.Everyday, tempOutfitIndex);
-                ApplyOriginalOverallHairColorsToOutfit(simDescription, lastOutfitCategory, lastOutfitIndex);
+                ApplyOverallHairColorsToOutfit(simDescription, lastOutfitCategory, lastOutfitIndex, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
                 using (Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper switchOutfitHelper = new Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper(simDescription.CreatedSim, Sims3.Gameplay.Actors.Sim.ClothesChangeReason.Force, lastOutfitCategory, lastOutfitIndex, false))
                 {
                     simDescription.CreatedSim.SwitchToOutfitWithSpin(switchOutfitHelper);
@@ -44,7 +44,7 @@ namespace Destrospean.PreserveGeneticHair
                             {
                                 continue;
                             }
-                            ApplyOriginalOverallHairColorsToOutfit(simDescription, outfitCategory, i);
+                            ApplyOverallHairColorsToOutfit(simDescription, outfitCategory, i, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
                         }
                     }
                     simDescription.mSpecialOutfitIndices.Clear();
@@ -59,7 +59,7 @@ namespace Destrospean.PreserveGeneticHair
                 });
         }
 
-        public static void ApplyOriginalOverallHairColorsToOutfit(this SimDescription simDescription, OutfitCategories outfitCategory, int outfitIndex)
+        public static void ApplyOverallHairColorsToOutfit(this SimDescription simDescription, OutfitCategories outfitCategory, int outfitIndex, GeneticColor bodyHairColor, GeneticColor eyebrowColor, GeneticColor[] facialHairColors, GeneticColor[] hairColors)
         {
             using (SimBuilder simBuilder = new SimBuilder
                 {
@@ -69,11 +69,10 @@ namespace Destrospean.PreserveGeneticHair
                 simBuilder.Clear();
                 OutfitUtils.SetAutomaticModifiers(simBuilder);
                 OutfitUtils.SetOutfit(simBuilder, simDescription.GetOutfit(outfitCategory, outfitIndex), null);
-                OutfitUtils.InjectBodyHairColor(simBuilder, simDescription.GetOriginalBodyHairColor().ActiveColor);
-                OutfitUtils.InjectEyeBrowHairColor(simBuilder, simDescription.GetOriginalEyebrowColor().ActiveColor);
-                Sims3.SimIFace.Color[] hairColors = System.Array.ConvertAll(simDescription.GetOriginalHairColors(), x => x.ActiveColor);
-                OutfitUtils.InjectHairColor(simBuilder, hairColors, BodyTypes.Beard);
-                OutfitUtils.InjectHairColor(simBuilder, hairColors, BodyTypes.Hair);
+                OutfitUtils.InjectBodyHairColor(simBuilder, bodyHairColor.ActiveColor);
+                OutfitUtils.InjectEyeBrowHairColor(simBuilder, eyebrowColor.ActiveColor);
+                OutfitUtils.InjectHairColor(simBuilder, System.Array.ConvertAll(facialHairColors, x => x.ActiveColor), BodyTypes.Beard);
+                OutfitUtils.InjectHairColor(simBuilder, System.Array.ConvertAll(hairColors, x => x.ActiveColor), BodyTypes.Hair);
                 SimOutfit outfit = new SimOutfit(simBuilder.CacheOutfit(string.Format("Rebuilt_{0}_{1}", outfitCategory, outfitIndex)));
                 if (outfitCategory == OutfitCategories.Special)
                 {
@@ -153,7 +152,20 @@ namespace Destrospean.PreserveGeneticHair
             if (value == null)
             {
                 bool rootsShowing;
-                return !simDescription.HasOriginalHairColors() && SimHairData.RootsShowing.TryGetValue(simDescription.SimDescriptionId, out rootsShowing) ? rootsShowing : SimHairData.RootsShowing[simDescription.SimDescriptionId] = false;
+                if (!simDescription.HasOriginalHairColors() && SimHairData.RootsShowing.TryGetValue(simDescription.SimDescriptionId, out rootsShowing))
+                {
+                    return rootsShowing;
+                }
+                // Note: find out index of root color
+                simDescription.HairColors[1].ActiveColor = simDescription.GetOriginalHairColors()[1].ActiveColor; 
+                simDescription.ApplyOverallHairColorsToAllOutfits(simDescription.BodyHairColor, simDescription.EyebrowColor, simDescription.FacialHairColors, simDescription.HairColors);
+                return SimHairData.RootsShowing[simDescription.SimDescriptionId] = false;
+            }
+            if (value.Value)
+            {
+                // Note: find out index of root color
+                simDescription.HairColors[1].ActiveColor = simDescription.GetOriginalHairColors()[1].ActiveColor; 
+                simDescription.ApplyOverallHairColorsToAllOutfits(simDescription.BodyHairColor, simDescription.EyebrowColor, simDescription.FacialHairColors, simDescription.HairColors);
             }
             return SimHairData.RootsShowing[simDescription.SimDescriptionId] = value.Value;
         }
