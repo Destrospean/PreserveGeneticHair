@@ -84,9 +84,8 @@ namespace Destrospean.PreserveGeneticHair
                 OutfitUtils.SetOutfit(simBuilder, simDescription.GetOutfit(outfitCategory, outfitIndex), null);
                 OutfitUtils.InjectBodyHairColor(simBuilder, simDescription.GetOriginalBodyHairColor().ActiveColor);
                 OutfitUtils.InjectEyeBrowHairColor(simBuilder, simDescription.GetOriginalEyebrowColor().ActiveColor);
-                Color[] hairColors = System.Array.ConvertAll(simDescription.GetOriginalHairColors(), x => x.ActiveColor);
-                OutfitUtils.InjectHairColor(simBuilder, hairColors, BodyTypes.Beard);
-                OutfitUtils.InjectHairColor(simBuilder, hairColors, BodyTypes.Hair);
+                OutfitUtils.InjectHairColor(simBuilder, System.Array.ConvertAll(simDescription.GetOriginalFacialHairColors(), x => x.ActiveColor), BodyTypes.Beard);
+                OutfitUtils.InjectHairColor(simBuilder, System.Array.ConvertAll(simDescription.GetOriginalHairColors(), x => x.ActiveColor), BodyTypes.Hair);
                 SimOutfit outfit = new SimOutfit(simBuilder.CacheOutfit(string.Format("Rebuilt_{0}_{1}", outfitCategory, outfitIndex)));
                 if (outfitCategory == OutfitCategories.Special)
                 {
