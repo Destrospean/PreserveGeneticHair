@@ -6,6 +6,14 @@ namespace Destrospean.PreserveGeneticHair
 {
     public static class SimHairColors
     {
+        public enum Channels
+        {
+            Base,
+            Highlight,
+            Root,
+            Tip
+        }
+
         public static void ApplyOverallHairColorsToAllOutfits(this SimDescription simDescription, GeneticColor bodyHairColor, GeneticColor eyebrowColor, GeneticColor[] facialHairColors, GeneticColor[] hairColors)
         {
             simDescription.BodyHairColor = simDescription.GetOriginalBodyHairColor();
@@ -149,6 +157,7 @@ namespace Destrospean.PreserveGeneticHair
 
         public static bool HasRootsShowing(this SimDescription simDescription, bool? value = null)
         {
+            int rootIndex = (int)Channels.Root;
             if (value == null)
             {
                 bool rootsShowing;
@@ -156,15 +165,13 @@ namespace Destrospean.PreserveGeneticHair
                 {
                     return rootsShowing;
                 }
-                // Note: find out index of root color
-                simDescription.HairColors[1].ActiveColor = simDescription.GetOriginalHairColors()[1].ActiveColor; 
+                simDescription.HairColors[rootIndex].ActiveColor = simDescription.GetOriginalHairColors()[rootIndex].ActiveColor; 
                 simDescription.ApplyOverallHairColorsToAllOutfits(simDescription.BodyHairColor, simDescription.EyebrowColor, simDescription.FacialHairColors, simDescription.HairColors);
                 return SimHairData.RootsShowing[simDescription.SimDescriptionId] = false;
             }
             if (value.Value)
             {
-                // Note: find out index of root color
-                simDescription.HairColors[1].ActiveColor = simDescription.GetOriginalHairColors()[1].ActiveColor; 
+                simDescription.HairColors[rootIndex].ActiveColor = simDescription.GetOriginalHairColors()[rootIndex].ActiveColor; 
                 simDescription.ApplyOverallHairColorsToAllOutfits(simDescription.BodyHairColor, simDescription.EyebrowColor, simDescription.FacialHairColors, simDescription.HairColors);
             }
             return SimHairData.RootsShowing[simDescription.SimDescriptionId] = value.Value;
