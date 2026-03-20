@@ -27,7 +27,7 @@ namespace Destrospean.PreserveGeneticHair
 
                 public override bool Test(Sim actor, IMirror target, bool isAutonomous, ref Sims3.SimIFace.GreyedOutTooltipCallback greyedOutTooltipCallback)
                 {
-                    if (actor.SimDescription.HasOriginalHairColors() || actor.CurrentOutfitCategory == OutfitCategories.Singed || actor.SimDescription.IsUsingMaternityOutfits || actor.SimDescription.Age == CASAgeGenderFlags.Baby || actor.OccultManager.DisallowClothesChange())
+                    if (actor.SimDescription.HasOriginalOverallHairColors() || actor.CurrentOutfitCategory == OutfitCategories.Singed || actor.SimDescription.IsUsingMaternityOutfits || actor.SimDescription.Age == CASAgeGenderFlags.Baby || actor.OccultManager.DisallowClothesChange())
                     {
                         return false;
                     }
@@ -54,7 +54,7 @@ namespace Destrospean.PreserveGeneticHair
                     StandardExit();
                     return false;
                 }
-                Actor.SimDescription.ApplyOriginalHairColorsToAllOutfits();
+                Actor.SimDescription.ApplyOriginalOverallHairColorsToAllOutfits();
                 StandardExit();
                 return true;
             }
@@ -82,8 +82,8 @@ namespace Destrospean.PreserveGeneticHair
 
             public override bool Run()
             {
-                Actor.SimDescription.ClearOriginalHairColors();
-                Actor.SimDescription.InitOriginalHairColors();
+                Actor.SimDescription.ClearOriginalOverallHairColors();
+                Actor.SimDescription.InitOriginalOverallHairColors();
                 return true;
             }
         }

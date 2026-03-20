@@ -6,7 +6,7 @@ namespace Destrospean.PreserveGeneticHair
 {
     public static class SimHairColors
     {
-        public static void ApplyOriginalHairColorsToAllOutfits(this SimDescription simDescription)
+        public static void ApplyOriginalOverallHairColorsToAllOutfits(this SimDescription simDescription)
         {
             simDescription.BodyHairColor = simDescription.GetOriginalBodyHairColor();
             simDescription.EyebrowColor = simDescription.GetOriginalEyebrowColor();
@@ -22,7 +22,7 @@ namespace Destrospean.PreserveGeneticHair
                 tempOutfitIndex = simDescription.GetOutfitCount(OutfitCategories.Everyday);
                 simDescription.AddOutfit(new SimOutfit(simDescription.CreatedSim.CurrentOutfit.Key), OutfitCategories.Everyday);
                 simDescription.CreatedSim.SwitchToOutfitWithoutSpin(OutfitCategories.Everyday, tempOutfitIndex);
-                ApplyOriginalHairColorsToOutfit(simDescription, lastOutfitCategory, lastOutfitIndex);
+                ApplyOriginalOverallHairColorsToOutfit(simDescription, lastOutfitCategory, lastOutfitIndex);
                 using (Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper switchOutfitHelper = new Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper(simDescription.CreatedSim, Sims3.Gameplay.Actors.Sim.ClothesChangeReason.Force, lastOutfitCategory, lastOutfitIndex, false))
                 {
                     simDescription.CreatedSim.SwitchToOutfitWithSpin(switchOutfitHelper);
@@ -44,7 +44,7 @@ namespace Destrospean.PreserveGeneticHair
                             {
                                 continue;
                             }
-                            ApplyOriginalHairColorsToOutfit(simDescription, outfitCategory, i);
+                            ApplyOriginalOverallHairColorsToOutfit(simDescription, outfitCategory, i);
                         }
                     }
                     simDescription.mSpecialOutfitIndices.Clear();
@@ -59,7 +59,7 @@ namespace Destrospean.PreserveGeneticHair
                 });
         }
 
-        public static void ApplyOriginalHairColorsToOutfit(this SimDescription simDescription, OutfitCategories outfitCategory, int outfitIndex)
+        public static void ApplyOriginalOverallHairColorsToOutfit(this SimDescription simDescription, OutfitCategories outfitCategory, int outfitIndex)
         {
             using (SimBuilder simBuilder = new SimBuilder
                 {
@@ -89,7 +89,7 @@ namespace Destrospean.PreserveGeneticHair
             }   
         }
 
-        public static void ClearOriginalHairColors(this SimDescription simDescription)
+        public static void ClearOriginalOverallHairColors(this SimDescription simDescription)
         {
             SimHairData.OriginalBodyHairColors.Remove(simDescription.SimDescriptionId);
             SimHairData.OriginalEyebrowColors.Remove(simDescription.SimDescriptionId);
@@ -121,23 +121,44 @@ namespace Destrospean.PreserveGeneticHair
             return SimHairData.OriginalHairColors.TryGetValue(simDescription.SimDescriptionId, out originalColors) ? originalColors : SimHairData.OriginalHairColors[simDescription.SimDescriptionId] = simDescription.HairColors;
         }
 
+        public static bool HasOriginalBodyHairColor(this SimDescription simDescription)
+        {
+            return simDescription.GetOriginalBodyHairColor().ActiveColor == simDescription.BodyHairColor.ActiveColor;
+        }
+
+        public static bool HasOriginalEyebrowColor(this SimDescription simDescription)
+        {
+            return simDescription.GetOriginalEyebrowColor().ActiveColor == simDescription.EyebrowColor.ActiveColor;
+        }
+
+        public static bool HasOriginalFacialHairColors(this SimDescription simDescription)
+        {
+            int tempIndex = 0;
+            return System.Array.TrueForAll(simDescription.GetOriginalFacialHairColors(), x => x.ActiveColor == simDescription.FacialHairColors[tempIndex++].ActiveColor);
+        }
+
         public static bool HasOriginalHairColors(this SimDescription simDescription)
         {
             int tempIndex = 0;
-            return simDescription.GetOriginalBodyHairColor().ActiveColor == simDescription.BodyHairColor.ActiveColor && simDescription.GetOriginalEyebrowColor().ActiveColor == simDescription.EyebrowColor.ActiveColor && System.Array.TrueForAll(simDescription.GetOriginalFacialHairColors(), x => x.ActiveColor == simDescription.FacialHairColors[tempIndex++].ActiveColor) && System.Array.TrueForAll(simDescription.GetOriginalHairColors(), x => x.ActiveColor == simDescription.HairColors[tempIndex++ - simDescription.FacialHairColors.Length].ActiveColor);
+            return System.Array.TrueForAll(simDescription.GetOriginalHairColors(), x => x.ActiveColor == simDescription.HairColors[tempIndex++].ActiveColor);
+        }
+
+        public static bool HasOriginalOverallHairColors(this SimDescription simDescription)
+        {
+            return simDescription.HasOriginalBodyHairColor() && simDescription.HasOriginalEyebrowColor() && simDescription.HasOriginalFacialHairColors() && simDescription.HasOriginalHairColors();
         }
 
         public static bool HasRootsShowing(this SimDescription simDescription, bool? value = null)
         {
-            if (value.HasValue)
+            if (value == null)
             {
-                return SimHairData.RootsShowing[simDescription.SimDescriptionId] = value.Value;
+                bool rootsShowing;
+                return SimHairData.RootsShowing.TryGetValue(simDescription.SimDescriptionId, out rootsShowing) ? rootsShowing : SimHairData.RootsShowing[simDescription.SimDescriptionId] = false;
             }
-            bool rootsShowing;
-            return SimHairData.RootsShowing.TryGetValue(simDescription.SimDescriptionId, out rootsShowing) ? rootsShowing : SimHairData.RootsShowing[simDescription.SimDescriptionId] = false;
+            return SimHairData.RootsShowing[simDescription.SimDescriptionId] = value.Value;
         }
 
-        public static void InitOriginalHairColors(this SimDescription simDescription)
+        public static void InitOriginalOverallHairColors(this SimDescription simDescription)
         {
             simDescription.GetOriginalBodyHairColor();
             simDescription.GetOriginalEyebrowColor();

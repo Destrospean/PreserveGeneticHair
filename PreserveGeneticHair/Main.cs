@@ -36,8 +36,7 @@ namespace Destrospean.PreserveGeneticHair
                             }
                         }
                     }
-                    int tempIndex = 0;
-                    if (!e.SimDescription.HasRootsShowing() && (e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0 && Array.Exists(e.SimDescription.GetOriginalHairColors(), x => x.ActiveColor != e.SimDescription.HairColors[tempIndex++].ActiveColor))
+                    if (!e.SimDescription.HasRootsShowing() && (e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0 && !e.SimDescription.HasOriginalHairColors())
                     {
                         e.SimDescription.HasRootsShowing(true);
                     }
@@ -67,7 +66,7 @@ namespace Destrospean.PreserveGeneticHair
                                 Sim sim = evt.TargetObject as Sim;
                                 if (sim != null)
                                 {
-                                    sim.SimDescription.ClearOriginalHairColors();
+                                    sim.SimDescription.ClearOriginalOverallHairColors();
                                 }
                             }
                             catch (Exception ex)
@@ -84,7 +83,7 @@ namespace Destrospean.PreserveGeneticHair
                                 if (sim != null)
                                 {
                                     AddInteractions(sim);
-                                    sim.SimDescription.InitOriginalHairColors();
+                                    sim.SimDescription.InitOriginalOverallHairColors();
                                 }
                             }
                             catch (Exception ex)
@@ -101,7 +100,7 @@ namespace Destrospean.PreserveGeneticHair
                                 {
                                     foreach (Sim sim in Sims3.Gameplay.Queries.GetObjects<Sim>())
                                     {
-                                        sim.SimDescription.InitOriginalHairColors();
+                                        sim.SimDescription.InitOriginalOverallHairColors();
                                     }
                                 }
                             }
