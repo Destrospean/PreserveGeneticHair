@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Destrospean.S3PIExtensions;
 using Mono.Cecil;
 using s3pi.Interfaces;
 
