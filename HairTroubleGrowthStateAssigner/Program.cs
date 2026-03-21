@@ -9,7 +9,7 @@ namespace Destrospean.HairTroubleGrowthStateAssigner
     {
         public static void Main(string[] args)
         {
-            // Get unique name for assembly and _XML resource
+            // Get unique name for the assembly and _XML resource
             var assemblyName = "Destrospean_HT" + System.Security.Cryptography.FNV32.GetHash(Guid.NewGuid().ToString());
 
             // Load the base package and create a new package to clone to
