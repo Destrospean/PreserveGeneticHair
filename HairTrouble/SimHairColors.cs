@@ -2,7 +2,7 @@
 using Sims3.Gameplay.CAS;
 using Sims3.SimIFace.CAS;
 
-namespace Destrospean.PreserveGeneticHair
+namespace Destrospean.HairTrouble
 {
     public static class SimHairColors
     {

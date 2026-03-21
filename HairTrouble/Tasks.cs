@@ -1,6 +1,6 @@
 ﻿using Sims3.SimIFace;
 
-namespace Destrospean.PreserveGeneticHair
+namespace Destrospean.HairTrouble
 {
     public class Tasks
     {

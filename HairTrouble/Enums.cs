@@ -1,4 +1,4 @@
-﻿namespace Destrospean.PreserveGeneticHair
+﻿namespace Destrospean.HairTrouble
 {
     [System.Flags]
     public enum HairGrowthStateChangeFlags

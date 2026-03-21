@@ -14,7 +14,7 @@ namespace System.Runtime.CompilerServices
     }
 }
 
-namespace Destrospean.PreserveGeneticHair
+namespace Destrospean.HairTrouble
 {
     [Plugin]
     public static class Main
@@ -23,7 +23,7 @@ namespace Destrospean.PreserveGeneticHair
 
         static Main()
         {
-            SimHairGrowth.StateChanged += (sender, e) =>
+            SimHairGrowth.HairGrowthStateChanged += (sender, e) =>
                 {
                     try
                     {
@@ -33,7 +33,7 @@ namespace Destrospean.PreserveGeneticHair
                             for (int i = 0; i < e.SimDescription.GetOutfitCount(outfitCategory); i++)
                             {
                                 HairGrowthStates outfitHairGrowthState;
-                                if (e.SimDescription.GetOutfit(outfitCategory, i).TryGetHairGrowthState(out outfitHairGrowthState) && outfitHairGrowthState > e.State)
+                                if (e.SimDescription.GetOutfit(outfitCategory, i).TryGetHairGrowthState(out outfitHairGrowthState) && outfitHairGrowthState > e.HairGrowthState)
                                 {
                                     // Insert code to change the hairstyle to one of the corresponding growth state here
                                 }

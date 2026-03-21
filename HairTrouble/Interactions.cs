@@ -6,7 +6,7 @@ using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace.CAS;
 using Tuning = Sims3.Gameplay.Destrospean.PreserveGeneticHair;
 
-namespace Destrospean.PreserveGeneticHair
+namespace Destrospean.HairTrouble
 {
     public class Interactions
     {
