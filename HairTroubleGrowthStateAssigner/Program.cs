@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Destrospean.S3PIExtensions;
 using Mono.Cecil;
 using s3pi.Interfaces;
 
@@ -10,14 +9,14 @@ namespace Destrospean.HairTroubleGrowthStateAssigner
     {
         public static void Main(string[] args)
         {
-            // Get unique name for the assembly and _XML resource
+            // Get a unique name for the assembly and _XML resource
             var assemblyName = "Destrospean_HT" + System.Security.Cryptography.FNV32.GetHash(Guid.NewGuid().ToString());
 
             // Load the base package and create a new package to clone to
             IPackage basePackage = s3pi.Package.Package.OpenPackage(0, "Destrospean_HT_Base.package"),
             newPackage = s3pi.Package.Package.NewPackage(0);
 
-            // Clone to the new package
+            // Get the assembly and XML
             AssemblyDefinition assembly = null;
             var xmlDocument = new System.Xml.XmlDocument();
             foreach (var resourceIndexEntry in basePackage.FindAll(x => x.Instance == 0x268C5DD8E82D5492))
