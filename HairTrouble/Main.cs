@@ -1,4 +1,5 @@
 ﻿using System;
+using Destrospean.PreserveGeneticHair;
 using MonoPatcherLib;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.EventSystem;

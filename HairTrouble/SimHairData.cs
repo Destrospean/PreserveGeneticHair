@@ -2,12 +2,12 @@
 using Sims3.Gameplay.CAS;
 using Sims3.SimIFace;
 
-namespace Destrospean.HairTrouble
+namespace Destrospean.PreserveGeneticHair
 {
     public static class SimHairData
     {
         [PersistableStatic(true)]
-        public static Dictionary<ulong, HairGrowthStates> GrowthStates = new Dictionary<ulong, HairGrowthStates>();
+        public static Dictionary<ulong, HairTrouble.HairGrowthStates> GrowthStates = new Dictionary<ulong, HairTrouble.HairGrowthStates>();
 
         [PersistableStatic(true)]
         public static Dictionary<ulong, GeneticColor> OriginalBodyHairColors = new Dictionary<ulong, GeneticColor>();
