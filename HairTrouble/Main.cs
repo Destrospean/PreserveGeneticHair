@@ -2,6 +2,7 @@
 using Destrospean.PreserveGeneticHair;
 using MonoPatcherLib;
 using Sims3.Gameplay.Actors;
+using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Objects.Decorations;
 using Sims3.SimIFace;
@@ -29,17 +30,7 @@ namespace Destrospean.HairTrouble
                     try
                     {
                         // Change hairstyles of all outfits to those of the corresponding growth states
-                        foreach (OutfitCategories outfitCategory in e.SimDescription.ListOfCategories)
-                        {
-                            for (int i = 0; i < e.SimDescription.GetOutfitCount(outfitCategory); i++)
-                            {
-                                HairGrowthStates outfitHairGrowthState;
-                                if (e.SimDescription.GetOutfit(outfitCategory, i).TryGetHairGrowthState(out outfitHairGrowthState) && (outfitHairGrowthState & e.HairGrowthState) != 0)
-                                {
-                                    // Insert code to change the hairstyle to one of the corresponding growth state here
-                                }
-                            }
-                        }
+                        e.SimDescription.ApplyHairstylesWithGrowthStateToAllOutfits(e.HairGrowthState);
                         // If dyed hair is grown out naturally (not via cheats), enable showing the roots of the original hair color
                         if (!e.SimDescription.HasRootsShowing() && (e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0 && !e.SimDescription.HasOriginalHairColors())
                         {
@@ -146,6 +137,12 @@ namespace Destrospean.HairTrouble
             {
                 sim.AddInteraction(Interactions.ResetOriginalHair.Singleton);
             }
+        }
+
+        public static ResourceKey FromS3PIFormatKeyString(string key)
+        {
+            string[] tgi = key.Replace("0x", "").Split('-');
+            return new ResourceKey(Convert.ToUInt64(tgi[2], 16), Convert.ToUInt32(tgi[0], 16), Convert.ToUInt32(tgi[1], 16));
         }
 
         public static string ToS3PIFormatKeyString(this ResourceKey key)
