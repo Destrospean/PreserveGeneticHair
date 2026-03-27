@@ -19,29 +19,12 @@ namespace System.Runtime.CompilerServices
 namespace Destrospean.HairTrouble
 {
     [Plugin]
-    public static class Main
+    public class Main
     {
         static EventListener sSimDescriptionDisposedListener, sSimInstantiatedListener, sSimSelectedListener;
 
         static Main()
         {
-            SimHairGrowth.HairGrowthStateChanged += (sender, e) =>
-                {
-                    try
-                    {
-                        // Change hairstyles of all outfits to those of the corresponding growth states
-                        e.SimDescription.ApplyHairstylesWithGrowthStateToAllOutfits(e.HairGrowthState);
-                        // If dyed hair is grown out naturally (not via cheats), enable showing the roots of the original hair color
-                        if (!e.SimDescription.HasRootsShowing() && (e.Flags & HairGrowthStateChangeFlags.NaturalGrowth) != 0 && !e.SimDescription.HasOriginalHairColors())
-                        {
-                            e.SimDescription.HasRootsShowing(true);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
-                    }
-                };
             World.sOnObjectPlacedInLotEventHandler += (sender, e) =>
                 {
                     World.OnObjectPlacedInLotEventArgs onObjectPlacedInLotEventArgs = e as World.OnObjectPlacedInLotEventArgs;
@@ -133,8 +116,10 @@ namespace Destrospean.HairTrouble
 
         static void AddInteractions(Sim sim)
         {
-            if (!sim.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.ResetOriginalHair.Singleton.GetType()))
+            if (!sim.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.DecrementHairGrowthState.Singleton.GetType()))
             {
+                sim.AddInteraction(Interactions.DecrementHairGrowthState.Singleton);
+                sim.AddInteraction(Interactions.IncrementHairGrowthState.Singleton);
                 sim.AddInteraction(Interactions.ResetOriginalHair.Singleton);
             }
         }
@@ -145,7 +130,7 @@ namespace Destrospean.HairTrouble
             return new ResourceKey(Convert.ToUInt64(tgi[2], 16), Convert.ToUInt32(tgi[0], 16), Convert.ToUInt32(tgi[1], 16));
         }
 
-        public static string ToS3PIFormatKeyString(this ResourceKey key)
+        public static string ToS3PIFormatKeyString(ResourceKey key)
         {
             return string.Format("0x{0:X8}-0x{1:X8}-0x{2:X16}", key.TypeId, key.GroupId, key.InstanceId);
         }

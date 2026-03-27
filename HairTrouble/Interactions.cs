@@ -4,13 +4,67 @@ using Sims3.Gameplay.Interactions;
 using Sims3.Gameplay.Interfaces;
 using Sims3.Gameplay.Utilities;
 using Sims3.SimIFace.CAS;
-using Tuning = Sims3.Gameplay.Destrospean.PreserveGeneticHair;
+using Tuning = Sims3.Gameplay.Destrospean.HairTrouble;
 
 namespace Destrospean.HairTrouble
 {
     public class Interactions
     {
-        const string kLocalizationPath = "Destrospean/PreserveGeneticHair/Interactions";
+        const string kLocalizationPath = "Destrospean/HairTrouble/Interactions";
+
+        public class DecrementHairGrowthState : ImmediateInteraction<Sim, Sim>
+        {
+            public static InteractionDefinition Singleton = new Definition();
+
+            public const string sLocalizationKey = kLocalizationPath + "/DecrementHairGrowthState";
+
+            [DoesntRequireTuning]
+            public class Definition : ImmediateInteractionDefinition<Sim, Sim, DecrementHairGrowthState>
+            {
+                public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair interaction)
+                {
+                    return Localization.LocalizeString(target.IsFemale, sLocalizationKey + ":Name");
+                }
+
+                public override bool Test(Sim actor, Sim target, bool isAutonomous, ref Sims3.SimIFace.GreyedOutTooltipCallback greyedOutTooltipCallback)
+                {
+                    return Tuning.kShowCheatInteractions;
+                }
+            }
+
+            public override bool Run()
+            {
+                Actor.SimDescription.DecrementHairGrowthState();
+                return true;
+            }
+        }
+
+        public class IncrementHairGrowthState : ImmediateInteraction<Sim, Sim>
+        {
+            public static InteractionDefinition Singleton = new Definition();
+
+            public const string sLocalizationKey = kLocalizationPath + "/IncrementHairGrowthState";
+
+            [DoesntRequireTuning]
+            public class Definition : ImmediateInteractionDefinition<Sim, Sim, IncrementHairGrowthState>
+            {
+                public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair interaction)
+                {
+                    return Localization.LocalizeString(target.IsFemale, sLocalizationKey + ":Name");
+                }
+
+                public override bool Test(Sim actor, Sim target, bool isAutonomous, ref Sims3.SimIFace.GreyedOutTooltipCallback greyedOutTooltipCallback)
+                {
+                    return Tuning.kShowCheatInteractions;
+                }
+            }
+
+            public override bool Run()
+            {
+                Actor.SimDescription.IncrementHairGrowthState();
+                return true;
+            }
+        }
 
         public class RemoveHairDye : Interaction<Sim, IMirror>
         {
