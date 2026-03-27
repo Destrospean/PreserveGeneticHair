@@ -107,8 +107,7 @@ namespace Destrospean.HairTrouble
             {
                 return hairGrowthState;
             }
-            CASPart? part;
-            if (simDescription.GetOutfit(simDescription.CreatedSim == null ? OutfitCategories.Everyday : simDescription.CreatedSim.CurrentOutfitCategory, simDescription.CreatedSim == null ? 0 : simDescription.CreatedSim.CurrentOutfitIndex).TryGetHairGrowthState(out hairGrowthState, out part))
+            if (simDescription.GetOutfit(simDescription.CreatedSim == null ? OutfitCategories.Everyday : simDescription.CreatedSim.CurrentOutfitCategory, simDescription.CreatedSim == null ? 0 : simDescription.CreatedSim.CurrentOutfitIndex).TryGetHairGrowthState(out hairGrowthState))
             {
                 simDescription.SetHairGrowthState(hairGrowthState);
                 return simDescription.GetHairGrowthState();
