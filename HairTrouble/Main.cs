@@ -34,7 +34,7 @@ namespace Destrospean.HairTrouble
                             for (int i = 0; i < e.SimDescription.GetOutfitCount(outfitCategory); i++)
                             {
                                 HairGrowthStates outfitHairGrowthState;
-                                if (e.SimDescription.GetOutfit(outfitCategory, i).TryGetHairGrowthState(out outfitHairGrowthState) && outfitHairGrowthState > e.HairGrowthState)
+                                if (e.SimDescription.GetOutfit(outfitCategory, i).TryGetHairGrowthState(out outfitHairGrowthState) && (outfitHairGrowthState & e.HairGrowthState) != 0)
                                 {
                                     // Insert code to change the hairstyle to one of the corresponding growth state here
                                 }
