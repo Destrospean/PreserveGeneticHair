@@ -54,6 +54,7 @@
     <Compile Include="SimHairGrowth.cs" />
     <Compile Include="SimHairColors.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Common.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib">

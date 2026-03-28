@@ -47,7 +47,7 @@ namespace Destrospean.HairTrouble
             }
             Tasks.TaskGenericAction.Start(() =>
                 {
-                    lock (Main.Lock)
+                    lock (Common.Lock)
                     {
                         try
                         {

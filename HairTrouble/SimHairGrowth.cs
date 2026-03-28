@@ -79,7 +79,7 @@ namespace Destrospean.HairTrouble
             }
             Tasks.TaskGenericAction.Start(() =>
                 {
-                    lock (Main.Lock)
+                    lock (Common.Lock)
                     {
                         try
                         {
@@ -128,7 +128,7 @@ namespace Destrospean.HairTrouble
             {
                 if (hairGrowthStateMapKvp.Value == hairGrowthState)
                 {
-                    CASPart casPart = new CASPart(Main.FromS3PIFormatKeyString(hairGrowthStateMapKvp.Key));
+                    CASPart casPart = new CASPart(Common.FromS3PIFormatKeyString(hairGrowthStateMapKvp.Key));
                     if (casPart.Key != ResourceKey.kInvalidResourceKey && (casPart.Age & simDescription.Age) != 0 && (casPart.Gender & simDescription.Gender) != 0 && (casPart.Species & simDescription.Species) != 0 && (casPart.CategoryFlags & (uint)outfitCategory) != 0)
                     {
                         validHairCASPs.Add(casPart);
@@ -280,7 +280,7 @@ namespace Destrospean.HairTrouble
 
         public static bool TryGetHairGrowthState(this CASPart part, out HairGrowthStates hairGrowthState)
         {
-            return HairGrowthStateMap.TryGetValue(Main.ToS3PIFormatKeyString(part.Key), out hairGrowthState);
+            return HairGrowthStateMap.TryGetValue(part.Key.ToS3PIFormatKeyString(), out hairGrowthState);
         }
 
         public static bool TryGetHairGrowthState(this SimDescription simDescription, out HairGrowthStates hairGrowthState)
