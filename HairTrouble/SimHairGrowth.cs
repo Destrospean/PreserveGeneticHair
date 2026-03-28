@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
 using Destrospean.PreserveGeneticHair;
 using Sims3.Gameplay.CAS;
 using Sims3.SimIFace;
@@ -20,15 +21,28 @@ namespace Destrospean.HairTrouble
                     sHairGrowthStateMap = new Dictionary<string, HairGrowthStates>();
                     foreach (System.Reflection.Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                     {
-                        if (assembly.GetType("Destrospean.HairTrouble.Data") == null)
+                        if (assembly.GetType("Destrospean.HairTrouble.Data") != null)
                         {
-                            continue;
-                        }
-                        foreach (System.Xml.XmlNode node in Simulator.LoadFromResourceKey(new ResourceKey(ResourceUtils.HashString64(assembly.GetName().Name), 0x333406C, 0)).SelectSingleNode("HairGrowthStateMap").ChildNodes)
-                        {
-                            if (node.Name == "Entry")
+                            string xmlString = Simulator.LoadXMLString(new ResourceKey(ResourceUtils.HashString64(assembly.GetName().Name), 0x333406C, 0));
+                            using (System.IO.StringReader stringReader = new System.IO.StringReader(xmlString))
                             {
-                                sHairGrowthStateMap[node.Attributes["CASPartKey"].Value] = (HairGrowthStates)Enum.Parse(typeof(HairGrowthStates), node.Attributes["GrowthState"].Value);
+                                using (XmlReader xmlReader = XmlReader.Create(stringReader))
+                                {
+                                    while (xmlReader.Read())
+                                    {
+                                        if (xmlReader.NodeType == XmlNodeType.Element)
+                                        {
+                                            if (xmlReader.Name == "HairGrowthStateMap")
+                                            {
+                                                xmlReader.MoveToContent();
+                                            }
+                                            else if (xmlReader.Name == "Entry")
+                                            {
+                                                sHairGrowthStateMap[xmlReader.GetAttribute("CASPartKey")] = (HairGrowthStates)Enum.Parse(typeof(HairGrowthStates), xmlReader.GetAttribute("GrowthState"));
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -65,37 +79,39 @@ namespace Destrospean.HairTrouble
             }
             Tasks.TaskGenericAction.Start(() =>
                 {
-                    try
+                    lock (Main.Lock)
                     {
-                        Dictionary<uint, int> specialOutfitIndices = new Dictionary<uint, int>();
-                        foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in simDescription.mSpecialOutfitIndices)
+                        try
                         {
-                            specialOutfitIndices.Add(specialOutfitIndexKvp.Key, simDescription.mSpecialOutfitIndices.Count - 1 - specialOutfitIndexKvp.Value);
-                        }
-                        foreach (OutfitCategories outfitCategory in simDescription.ListOfCategories)
-                        {
-                            for (int i = simDescription.GetOutfitCount(outfitCategory) - 1; i > -1 ; i--)
+                            Dictionary<uint, int> specialOutfitIndices = new Dictionary<uint, int>();
+                            foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in simDescription.mSpecialOutfitIndices)
                             {
-                                if (simDescription.CreatedSim != null && outfitCategory == lastOutfitCategory && i == lastOutfitIndex)
+                                specialOutfitIndices.Add(specialOutfitIndexKvp.Key, simDescription.mSpecialOutfitIndices.Count - 1 - specialOutfitIndexKvp.Value);
+                            }
+                            foreach (OutfitCategories outfitCategory in simDescription.ListOfCategories)
+                            {
+                                for (int i = simDescription.GetOutfitCount(outfitCategory) - 1; i > -1 ; i--)
                                 {
-                                    continue;
+                                    if (simDescription.CreatedSim == null || outfitCategory != lastOutfitCategory || i != lastOutfitIndex)
+                                    {
+                                        ApplyHairstyleWithGrowthStateToOutfit(simDescription, outfitCategory, i, hairGrowthState);
+                                    }
                                 }
-                                ApplyHairstyleWithGrowthStateToOutfit(simDescription, outfitCategory, i, hairGrowthState);
+                            }
+                            simDescription.mSpecialOutfitIndices.Clear();
+                            foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in specialOutfitIndices)
+                            {
+                                simDescription.mSpecialOutfitIndices.Add(specialOutfitIndexKvp.Key, specialOutfitIndexKvp.Value);
+                            }
+                            if (simDescription.CreatedSim != null)
+                            {
+                                ((Sims3.Gameplay.UI.HudModel)Sims3.UI.Responder.Instance.HudModel).NotifySimChanged(simDescription.CreatedSim.ObjectId);
                             }
                         }
-                        simDescription.mSpecialOutfitIndices.Clear();
-                        foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in specialOutfitIndices)
+                        catch (Exception ex)
                         {
-                            simDescription.mSpecialOutfitIndices.Add(specialOutfitIndexKvp.Key, specialOutfitIndexKvp.Value);
+                            ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
                         }
-                        if (simDescription.CreatedSim != null)
-                        {
-                            ((Sims3.Gameplay.UI.HudModel)Sims3.UI.Responder.Instance.HudModel).NotifySimChanged(simDescription.CreatedSim.ObjectId);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        ((IScriptErrorWindow)AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
                     }
                 });
         }
@@ -105,49 +121,49 @@ namespace Destrospean.HairTrouble
             HairGrowthStates outfitHairGrowthState;
             if (simDescription.GetOutfit(outfitCategory, outfitIndex).TryGetHairGrowthState(out outfitHairGrowthState) && (outfitHairGrowthState & hairGrowthState) != 0)
             {
-                Random random = new Random();
-                List<CASPart> validHairCASPs = new List<CASPart>();
-                foreach (KeyValuePair<string, HairGrowthStates> kvp in SimHairGrowth.HairGrowthStateMap)
+                return;
+            }
+            List<CASPart> validHairCASPs = new List<CASPart>();
+            foreach (KeyValuePair<string, HairGrowthStates> hairGrowthStateMapKvp in HairGrowthStateMap)
+            {
+                if (hairGrowthStateMapKvp.Value == hairGrowthState)
                 {
-                    if (kvp.Value == hairGrowthState)
+                    CASPart casPart = new CASPart(Main.FromS3PIFormatKeyString(hairGrowthStateMapKvp.Key));
+                    if (casPart.Key != ResourceKey.kInvalidResourceKey && (casPart.Age & simDescription.Age) != 0 && (casPart.Gender & simDescription.Gender) != 0 && (casPart.Species & simDescription.Species) != 0 && (casPart.CategoryFlags & (uint)outfitCategory) != 0)
                     {
-                        CASPart tempCASPart = new CASPart(Main.FromS3PIFormatKeyString(kvp.Key));
-                        if (tempCASPart.Key != ResourceKey.kInvalidResourceKey && (tempCASPart.AgeGenderSpecies & simDescription.AgeGenderSpecies) != 0 && (tempCASPart.CategoryFlags & (uint)outfitCategory) != 0)
-                        {
-                            validHairCASPs.Add(tempCASPart);
-                        }
+                        validHairCASPs.Add(casPart);
                     }
                 }
-                if (validHairCASPs.Count == 0)
+            }
+            if (validHairCASPs.Count == 0)
+            {
+                return;
+            }
+            using (SimBuilder simBuilder = new SimBuilder
                 {
-                    return;
+                    UseCompression = true
+                })
+            {
+                simBuilder.Clear();
+                OutfitUtils.SetAutomaticModifiers(simBuilder);
+                OutfitUtils.SetOutfit(simBuilder, simDescription.GetOutfit(outfitCategory, outfitIndex), null);
+                simBuilder.RemoveParts(BodyTypes.Hair);
+                simBuilder.AddPart(validHairCASPs[Sims3.Gameplay.Core.RandomUtil.GetInt(0, validHairCASPs.Count - 1)]);
+                OutfitUtils.InjectBodyHairColor(simBuilder, simDescription.BodyHairColor.ActiveColor);
+                OutfitUtils.InjectEyeBrowHairColor(simBuilder, simDescription.EyebrowColor.ActiveColor);
+                OutfitUtils.InjectHairColor(simBuilder, Array.ConvertAll(simDescription.FacialHairColors, x => x.ActiveColor), BodyTypes.Beard);
+                OutfitUtils.InjectHairColor(simBuilder, Array.ConvertAll(simDescription.HairColors, x => x.ActiveColor), BodyTypes.Hair);
+                SimOutfit outfit = new SimOutfit(simBuilder.CacheOutfit(string.Format("Rebuilt_{0}_{1}", outfitCategory, outfitIndex)));
+                if (outfitCategory == OutfitCategories.Special)
+                {
+                    uint key = simDescription.GetSpecialOutfitKeyForIndex(outfitIndex);
+                    simDescription.RemoveSpecialOutfit(key);
+                    simDescription.AddSpecialOutfit(outfit, key);
                 }
-                using (SimBuilder simBuilder = new SimBuilder
-                    {
-                        UseCompression = true
-                    })
+                else
                 {
-                    simBuilder.Clear();
-                    OutfitUtils.SetAutomaticModifiers(simBuilder);
-                    OutfitUtils.SetOutfit(simBuilder, simDescription.GetOutfit(outfitCategory, outfitIndex), null);
-                    simBuilder.RemoveParts(BodyTypes.Hair);
-                    simBuilder.AddPart(validHairCASPs[random.Next(0, validHairCASPs.Count - 1)]);
-                    OutfitUtils.InjectBodyHairColor(simBuilder, simDescription.BodyHairColor.ActiveColor);
-                    OutfitUtils.InjectEyeBrowHairColor(simBuilder, simDescription.EyebrowColor.ActiveColor);
-                    OutfitUtils.InjectHairColor(simBuilder, Array.ConvertAll(simDescription.FacialHairColors, x => x.ActiveColor), BodyTypes.Beard);
-                    OutfitUtils.InjectHairColor(simBuilder, Array.ConvertAll(simDescription.HairColors, x => x.ActiveColor), BodyTypes.Hair);
-                    SimOutfit outfit = new SimOutfit(simBuilder.CacheOutfit(string.Format("Rebuilt_{0}_{1}", outfitCategory, outfitIndex)));
-                    if (outfitCategory == OutfitCategories.Special)
-                    {
-                        uint key = simDescription.GetSpecialOutfitKeyForIndex(outfitIndex);
-                        simDescription.RemoveSpecialOutfit(key);
-                        simDescription.AddSpecialOutfit(outfit, key);
-                    }
-                    else
-                    {
-                        simDescription.RemoveOutfit(outfitCategory, outfitIndex, true);
-                        simDescription.AddOutfit(outfit, outfitCategory, outfitIndex);
-                    } 
+                    simDescription.RemoveOutfit(outfitCategory, outfitIndex, true);
+                    simDescription.AddOutfit(outfit, outfitCategory, outfitIndex);
                 }
             }
         }
@@ -236,7 +252,7 @@ namespace Destrospean.HairTrouble
                 }
             }
             SimHairData.GrowthStates[simDescription.SimDescriptionId] = longestHairGrowthState;
-            simDescription.OnHairGrowthStateChanged(hairGrowthState, flags);
+            simDescription.OnHairGrowthStateChanged(longestHairGrowthState, flags);
         }
 
         public static void SetHairGrowthState(this SimDescription simDescription, int hairGrowthState, HairGrowthStateChangeFlags flags = 0)

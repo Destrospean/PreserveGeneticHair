@@ -7,6 +7,7 @@ using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Objects.Decorations;
 using Sims3.SimIFace;
 using Sims3.SimIFace.CAS;
+using Sims3.UI;
 
 namespace System.Runtime.CompilerServices
 {
@@ -22,6 +23,8 @@ namespace Destrospean.HairTrouble
     public class Main
     {
         static EventListener sSimDescriptionDisposedListener, sSimInstantiatedListener, sSimSelectedListener;
+
+        public static object Lock = new object();
 
         static Main()
         {
@@ -128,6 +131,38 @@ namespace Destrospean.HairTrouble
         {
             string[] tgi = key.Replace("0x", "").Split('-');
             return new ResourceKey(Convert.ToUInt64(tgi[2], 16), Convert.ToUInt32(tgi[0], 16), Convert.ToUInt32(tgi[1], 16));
+        }
+
+        public static void Notify(string message, SimDescription simDescription, StyledNotification.NotificationStyle style)
+        {
+            Notify(message, simDescription, style, true);
+        }
+
+        public static void Notify(string message, SimDescription fakeSimDescription, StyledNotification.NotificationStyle style, bool checkForFake)
+        {
+            SimDescription simDescription = fakeSimDescription;
+            if (simDescription == null)
+            {
+                StyledNotification.Show(new StyledNotification.Format(message, style));
+                return;
+            }
+            if (checkForFake)
+            {
+                simDescription = SimDescription.Find(fakeSimDescription.SimDescriptionId);
+                if (simDescription == null)
+                {
+                    StyledNotification.Show(new StyledNotification.Format(message, style));
+                    return;
+                }
+            }
+            if (simDescription.CreatedSim != null)
+            {
+                StyledNotification.Show(new StyledNotification.Format(message, ObjectGuid.InvalidObjectGuid, simDescription.CreatedSim.ObjectId, style));
+            }
+            else
+            {
+                StyledNotification.Show(new StyledNotification.Format(message, style));
+            }
         }
 
         public static string ToS3PIFormatKeyString(ResourceKey key)
