@@ -26,28 +26,28 @@ namespace Destrospean.HairTrouble
             simDescription.FacialHairColors = simDescription.GetOriginalFacialHairColors();
             simDescription.HairColors = simDescription.GetOriginalHairColors();
             OutfitCategories lastOutfitCategory = 0;
-            int lastOutfitIndex = 0,
-            tempOutfitIndex = 0;
+            int lastOutfitIndex = 0;
             if (simDescription.CreatedSim != null)
             {
                 lastOutfitCategory = simDescription.CreatedSim.CurrentOutfitCategory;
                 lastOutfitIndex = simDescription.CreatedSim.CurrentOutfitIndex;
-                tempOutfitIndex = simDescription.GetOutfitCount(OutfitCategories.Everyday);
-                simDescription.AddOutfit(new SimOutfit(simDescription.CreatedSim.CurrentOutfit.Key), OutfitCategories.Everyday);
-                simDescription.CreatedSim.SwitchToOutfitWithoutSpin(OutfitCategories.Everyday, tempOutfitIndex);
-                ApplyOverallHairColorsToOutfit(simDescription, simBuilder, lastOutfitCategory, lastOutfitIndex, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
                 if (spin)
                 {
+                    int tempOutfitIndex = simDescription.GetOutfitCount(OutfitCategories.Everyday);
+                    simDescription.AddOutfit(new SimOutfit(simDescription.CreatedSim.CurrentOutfit.Key), OutfitCategories.Everyday);
+                    simDescription.CreatedSim.SwitchToOutfitWithoutSpin(OutfitCategories.Everyday, tempOutfitIndex);
+                    ApplyOverallHairColorsToOutfit(simDescription, simBuilder, lastOutfitCategory, lastOutfitIndex, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
                     using (Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper switchOutfitHelper = new Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper(simDescription.CreatedSim, Sims3.Gameplay.Actors.Sim.ClothesChangeReason.Force, lastOutfitCategory, lastOutfitIndex, false))
                     {
                         simDescription.CreatedSim.SwitchToOutfitWithSpin(switchOutfitHelper);
                     }
+                    simDescription.RemoveOutfit(OutfitCategories.Everyday, tempOutfitIndex, true);
                 }
                 else
                 {
-                    simDescription.CreatedSim.SwitchToOutfitWithoutSpin(lastOutfitCategory, lastOutfitIndex);
+                    ApplyOverallHairColorsToOutfit(simDescription, simBuilder, lastOutfitCategory, lastOutfitIndex, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
+                    simDescription.CreatedSim.RefreshCurrentOutfit(false);
                 }
-                simDescription.RemoveOutfit(OutfitCategories.Everyday, tempOutfitIndex, true);
             }
             Dictionary<uint, int> specialOutfitIndices = new Dictionary<uint, int>();
             foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in simDescription.mSpecialOutfitIndices)

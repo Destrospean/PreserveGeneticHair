@@ -53,28 +53,28 @@ namespace Destrospean.HairTrouble
                     UseCompression = true
                 };
             OutfitCategories lastOutfitCategory = 0;
-            int lastOutfitIndex = 0,
-            tempOutfitIndex = 0;
+            int lastOutfitIndex = 0;
             if (simDescription.CreatedSim != null)
             {
                 lastOutfitCategory = simDescription.CreatedSim.CurrentOutfitCategory;
                 lastOutfitIndex = simDescription.CreatedSim.CurrentOutfitIndex;
-                tempOutfitIndex = simDescription.GetOutfitCount(OutfitCategories.Everyday);
-                simDescription.AddOutfit(new SimOutfit(simDescription.CreatedSim.CurrentOutfit.Key), OutfitCategories.Everyday);
-                simDescription.CreatedSim.SwitchToOutfitWithoutSpin(OutfitCategories.Everyday, tempOutfitIndex);
-                ApplyHairstyleWithGrowthStateToOutfit(simDescription, simBuilder, lastOutfitCategory, lastOutfitIndex, hairGrowthState);
                 if (spin)
                 {
+                    int tempOutfitIndex = simDescription.GetOutfitCount(OutfitCategories.Everyday);
+                    ApplyHairstyleWithGrowthStateToOutfit(simDescription, simBuilder, lastOutfitCategory, lastOutfitIndex, hairGrowthState);
+                    simDescription.AddOutfit(new SimOutfit(simDescription.CreatedSim.CurrentOutfit.Key), OutfitCategories.Everyday);
+                    simDescription.CreatedSim.SwitchToOutfitWithoutSpin(OutfitCategories.Everyday, tempOutfitIndex);
                     using (Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper switchOutfitHelper = new Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper(simDescription.CreatedSim, Sims3.Gameplay.Actors.Sim.ClothesChangeReason.Force, lastOutfitCategory, lastOutfitIndex, false))
                     {
                         simDescription.CreatedSim.SwitchToOutfitWithSpin(switchOutfitHelper);
                     }
+                    simDescription.RemoveOutfit(OutfitCategories.Everyday, tempOutfitIndex, true);
                 }
                 else
                 {
-                    simDescription.CreatedSim.SwitchToOutfitWithoutSpin(lastOutfitCategory, lastOutfitIndex);
+                    ApplyHairstyleWithGrowthStateToOutfit(simDescription, simBuilder, lastOutfitCategory, lastOutfitIndex, hairGrowthState);
+                    simDescription.CreatedSim.RefreshCurrentOutfit(false);
                 }
-                simDescription.RemoveOutfit(OutfitCategories.Everyday, tempOutfitIndex, true);
             }
             Dictionary<uint, int> specialOutfitIndices = new Dictionary<uint, int>();
             foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in simDescription.mSpecialOutfitIndices)
