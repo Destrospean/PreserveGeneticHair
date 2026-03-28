@@ -116,7 +116,7 @@ namespace Destrospean.HairTrouble
                 if (hairGrowthStateMapKvp.Value == hairGrowthState)
                 {
                     CASPart casPart = new CASPart(Common.FromS3PIFormatKeyString(hairGrowthStateMapKvp.Key));
-                    if (casPart.Key != ResourceKey.kInvalidResourceKey && (casPart.Age & simDescription.Age) != 0 && (casPart.Gender & simDescription.Gender) != 0 && (casPart.Species & simDescription.Species) != 0 && ((OutfitCategories)casPart.CategoryFlags & OutfitCategories.CategoryMask & outfitCategory) != 0 && (casPart.CategoryFlags & (uint)OutfitCategoriesExtended.ValidForRandom) != 0 && ((OutfitCategoriesExtended)casPart.CategoryFlags & (OutfitCategoriesExtended.IsHat | OutfitCategoriesExtended.IsHiddenInCAS)) == 0)
+                    if (casPart.Key != ResourceKey.kInvalidResourceKey && (casPart.Age & simDescription.Age) != 0 && (casPart.Gender & simDescription.Gender) != 0 && (casPart.Species & simDescription.Species) != 0 && (casPart.CategoryFlags & (uint)outfitCategory) != 0 /*&& (casPart.CategoryFlags & (uint)OutfitCategoriesExtended.ValidForRandom) != 0*/ && (casPart.CategoryFlags & (uint)(OutfitCategoriesExtended.IsHat | OutfitCategoriesExtended.IsHiddenInCAS)) == 0)
                     {
                         validHairCASPs.Add(casPart);
                     }
