@@ -8,16 +8,9 @@ namespace Destrospean.HairTrouble
 
         public class TaskGenericAction : Task
         {
-            Action mAction = null;
-
             Action[] mActions = null;
 
-            public TaskGenericAction(Action PerformAction)
-            {
-                mAction = PerformAction;
-            }   
-
-            public TaskGenericAction(Action[] PerformActions)
+            public TaskGenericAction(params Action[] PerformActions)
             {
                 mActions = PerformActions;
             }
@@ -26,11 +19,7 @@ namespace Destrospean.HairTrouble
             {
                 try
                 {
-                    if (mAction != null)
-                    {
-                        mAction();
-                    }
-                    if (mActions != null && mActions.Length > 0)
+                    if (mActions != null)
                     {
                         foreach (Action action in mActions)
                         {
@@ -43,16 +32,11 @@ namespace Destrospean.HairTrouble
                 }
                 finally 
                 {
-                    Simulator.DestroyObject(base.ObjectId);
+                    Simulator.DestroyObject(ObjectId);
                 }
             }
 
-            public static void Start(Action PerformAction)
-            {
-                Simulator.AddObject(new TaskGenericAction(PerformAction));
-            }
-
-            public static void StartArray(Action[] PerformActions)
+            public static void Start(params Action[] PerformActions)
             {
                 Simulator.AddObject(new TaskGenericAction(PerformActions));
             }
