@@ -43,7 +43,7 @@ namespace Destrospean.HairTrouble
                 }
                 finally 
                 {
-                    Sims3.SimIFace.Simulator.DestroyObject(base.ObjectId);
+                    Simulator.DestroyObject(base.ObjectId);
                 }
             }
 
