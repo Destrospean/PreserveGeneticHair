@@ -36,6 +36,11 @@ namespace Destrospean.HairTrouble
                 }
             }
 
+            public void Start()
+            {
+                Simulator.AddObject(this);
+            }
+
             public static void Start(params Action[] actions)
             {
                 Simulator.AddObject(new TaskGenericAction(actions));

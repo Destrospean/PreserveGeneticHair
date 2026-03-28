@@ -47,39 +47,36 @@ namespace Destrospean.HairTrouble
             }
             Tasks.TaskGenericAction.Start(() =>
                 {
-                    lock (Common.Lock)
+                    try
                     {
-                        try
+                        Dictionary<uint, int> specialOutfitIndices = new Dictionary<uint, int>();
+                        foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in simDescription.mSpecialOutfitIndices)
                         {
-                            Dictionary<uint, int> specialOutfitIndices = new Dictionary<uint, int>();
-                            foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in simDescription.mSpecialOutfitIndices)
+                            specialOutfitIndices.Add(specialOutfitIndexKvp.Key, simDescription.mSpecialOutfitIndices.Count - 1 - specialOutfitIndexKvp.Value);
+                        }
+                        foreach (OutfitCategories outfitCategory in simDescription.ListOfCategories)
+                        {
+                            for (int i = simDescription.GetOutfitCount(outfitCategory) - 1; i > -1 ; i--)
                             {
-                                specialOutfitIndices.Add(specialOutfitIndexKvp.Key, simDescription.mSpecialOutfitIndices.Count - 1 - specialOutfitIndexKvp.Value);
-                            }
-                            foreach (OutfitCategories outfitCategory in simDescription.ListOfCategories)
-                            {
-                                for (int i = simDescription.GetOutfitCount(outfitCategory) - 1; i > -1 ; i--)
+                                if (simDescription.CreatedSim == null || outfitCategory != lastOutfitCategory || i != lastOutfitIndex)
                                 {
-                                    if (simDescription.CreatedSim == null || outfitCategory != lastOutfitCategory || i != lastOutfitIndex)
-                                    {
-                                        ApplyOverallHairColorsToOutfit(simDescription, outfitCategory, i, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
-                                    }
+                                    ApplyOverallHairColorsToOutfit(simDescription, outfitCategory, i, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
                                 }
                             }
-                            simDescription.mSpecialOutfitIndices.Clear();
-                            foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in specialOutfitIndices)
-                            {
-                                simDescription.mSpecialOutfitIndices.Add(specialOutfitIndexKvp.Key, specialOutfitIndexKvp.Value);
-                            }
-                            if (simDescription.CreatedSim != null)
-                            {
-                                ((Sims3.Gameplay.UI.HudModel)Sims3.UI.Responder.Instance.HudModel).NotifySimChanged(simDescription.CreatedSim.ObjectId);
-                            }
                         }
-                        catch (System.Exception ex)
+                        simDescription.mSpecialOutfitIndices.Clear();
+                        foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in specialOutfitIndices)
                         {
-                            ((Sims3.SimIFace.IScriptErrorWindow)System.AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
+                            simDescription.mSpecialOutfitIndices.Add(specialOutfitIndexKvp.Key, specialOutfitIndexKvp.Value);
                         }
+                        if (simDescription.CreatedSim != null)
+                        {
+                            ((Sims3.Gameplay.UI.HudModel)Sims3.UI.Responder.Instance.HudModel).NotifySimChanged(simDescription.CreatedSim.ObjectId);
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        ((Sims3.SimIFace.IScriptErrorWindow)System.AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
                     }
                 });
         }
