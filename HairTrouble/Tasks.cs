@@ -10,9 +10,9 @@ namespace Destrospean.HairTrouble
         {
             Action[] mActions = null;
 
-            public TaskGenericAction(params Action[] PerformActions)
+            public TaskGenericAction(params Action[] actions)
             {
-                mActions = PerformActions;
+                mActions = actions;
             }
 
             public override void Simulate()
@@ -36,9 +36,9 @@ namespace Destrospean.HairTrouble
                 }
             }
 
-            public static void Start(params Action[] PerformActions)
+            public static void Start(params Action[] actions)
             {
-                Simulator.AddObject(new TaskGenericAction(PerformActions));
+                Simulator.AddObject(new TaskGenericAction(actions));
             }
         }
     }
