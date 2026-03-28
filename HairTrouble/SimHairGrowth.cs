@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml;
 using Destrospean.PreserveGeneticHair;
 using Sims3.Gameplay.CAS;
 using Sims3.SimIFace;
@@ -21,30 +20,26 @@ namespace Destrospean.HairTrouble
                     sHairGrowthStateMap = new Dictionary<string, HairGrowthStates>();
                     foreach (System.Reflection.Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                     {
-                        if (assembly.GetType("Destrospean.HairTrouble.Data") != null)
+                        if (assembly.GetType("Destrospean.HairTrouble.Data") == null)
                         {
-                            string xmlString = Simulator.LoadXMLString(new ResourceKey(ResourceUtils.HashString64(assembly.GetName().Name), 0x333406C, 0));
-                            using (System.IO.StringReader stringReader = new System.IO.StringReader(xmlString))
+                            continue;
+                        }
+                        System.Xml.XmlReader reader = Simulator.ReadXml(new ResourceKey(ResourceUtils.HashString64(assembly.GetName().Name), 0x333406C, 0));
+                        while (reader.Read())
+                        {
+                            if (reader.NodeType == System.Xml.XmlNodeType.Element)
                             {
-                                using (XmlReader xmlReader = XmlReader.Create(stringReader))
+                                if (reader.Name == "HairGrowthStateMap")
                                 {
-                                    while (xmlReader.Read())
-                                    {
-                                        if (xmlReader.NodeType == XmlNodeType.Element)
-                                        {
-                                            if (xmlReader.Name == "HairGrowthStateMap")
-                                            {
-                                                xmlReader.MoveToContent();
-                                            }
-                                            else if (xmlReader.Name == "Entry")
-                                            {
-                                                sHairGrowthStateMap[xmlReader.GetAttribute("CASPartKey")] = (HairGrowthStates)Enum.Parse(typeof(HairGrowthStates), xmlReader.GetAttribute("GrowthState"));
-                                            }
-                                        }
-                                    }
+                                    reader.MoveToContent();
+                                }
+                                else if (reader.Name == "Entry")
+                                {
+                                    sHairGrowthStateMap[reader.GetAttribute("CASPartKey")] = (HairGrowthStates)Enum.Parse(typeof(HairGrowthStates), reader.GetAttribute("GrowthState"));
                                 }
                             }
                         }
+                        reader.Close();
                     }
                 }
                 return sHairGrowthStateMap;
