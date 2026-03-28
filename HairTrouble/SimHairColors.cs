@@ -17,6 +17,10 @@ namespace Destrospean.HairTrouble
 
         public static void ApplyOverallHairColorsToAllOutfits(this SimDescription simDescription, GeneticColor bodyHairColor, GeneticColor eyebrowColor, GeneticColor[] facialHairColors, GeneticColor[] hairColors, bool spin = false)
         {
+            SimBuilder simBuilder = new SimBuilder
+                {
+                    UseCompression = true
+                };
             simDescription.BodyHairColor = simDescription.GetOriginalBodyHairColor();
             simDescription.EyebrowColor = simDescription.GetOriginalEyebrowColor();
             simDescription.FacialHairColors = simDescription.GetOriginalFacialHairColors();
@@ -31,7 +35,7 @@ namespace Destrospean.HairTrouble
                 tempOutfitIndex = simDescription.GetOutfitCount(OutfitCategories.Everyday);
                 simDescription.AddOutfit(new SimOutfit(simDescription.CreatedSim.CurrentOutfit.Key), OutfitCategories.Everyday);
                 simDescription.CreatedSim.SwitchToOutfitWithoutSpin(OutfitCategories.Everyday, tempOutfitIndex);
-                ApplyOverallHairColorsToOutfit(simDescription, lastOutfitCategory, lastOutfitIndex, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
+                ApplyOverallHairColorsToOutfit(simDescription, simBuilder, lastOutfitCategory, lastOutfitIndex, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
                 if (spin)
                 {
                     using (Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper switchOutfitHelper = new Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper(simDescription.CreatedSim, Sims3.Gameplay.Actors.Sim.ClothesChangeReason.Force, lastOutfitCategory, lastOutfitIndex, false))
@@ -45,69 +49,54 @@ namespace Destrospean.HairTrouble
                 }
                 simDescription.RemoveOutfit(OutfitCategories.Everyday, tempOutfitIndex, true);
             }
-            Tasks.TaskGenericAction.Start(() =>
+            Dictionary<uint, int> specialOutfitIndices = new Dictionary<uint, int>();
+            foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in simDescription.mSpecialOutfitIndices)
+            {
+                specialOutfitIndices.Add(specialOutfitIndexKvp.Key, simDescription.mSpecialOutfitIndices.Count - 1 - specialOutfitIndexKvp.Value);
+            }
+            foreach (OutfitCategories outfitCategory in simDescription.ListOfCategories)
+            {
+                for (int i = simDescription.GetOutfitCount(outfitCategory) - 1; i > -1 ; i--)
                 {
-                    try
+                    if (simDescription.CreatedSim == null || outfitCategory != lastOutfitCategory || i != lastOutfitIndex)
                     {
-                        Dictionary<uint, int> specialOutfitIndices = new Dictionary<uint, int>();
-                        foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in simDescription.mSpecialOutfitIndices)
-                        {
-                            specialOutfitIndices.Add(specialOutfitIndexKvp.Key, simDescription.mSpecialOutfitIndices.Count - 1 - specialOutfitIndexKvp.Value);
-                        }
-                        foreach (OutfitCategories outfitCategory in simDescription.ListOfCategories)
-                        {
-                            for (int i = simDescription.GetOutfitCount(outfitCategory) - 1; i > -1 ; i--)
-                            {
-                                if (simDescription.CreatedSim == null || outfitCategory != lastOutfitCategory || i != lastOutfitIndex)
-                                {
-                                    ApplyOverallHairColorsToOutfit(simDescription, outfitCategory, i, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
-                                }
-                            }
-                        }
-                        simDescription.mSpecialOutfitIndices.Clear();
-                        foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in specialOutfitIndices)
-                        {
-                            simDescription.mSpecialOutfitIndices.Add(specialOutfitIndexKvp.Key, specialOutfitIndexKvp.Value);
-                        }
-                        if (simDescription.CreatedSim != null)
-                        {
-                            ((Sims3.Gameplay.UI.HudModel)Sims3.UI.Responder.Instance.HudModel).NotifySimChanged(simDescription.CreatedSim.ObjectId);
-                        }
+                        ApplyOverallHairColorsToOutfit(simDescription, simBuilder, outfitCategory, i, bodyHairColor, eyebrowColor, facialHairColors, hairColors);
                     }
-                    catch (System.Exception ex)
-                    {
-                        ((Sims3.SimIFace.IScriptErrorWindow)System.AppDomain.CurrentDomain.GetData("ScriptErrorWindow")).DisplayScriptError(null, ex);
-                    }
-                });
+                }
+            }
+            simDescription.mSpecialOutfitIndices.Clear();
+            foreach (KeyValuePair<uint, int> specialOutfitIndexKvp in specialOutfitIndices)
+            {
+                simDescription.mSpecialOutfitIndices.Add(specialOutfitIndexKvp.Key, specialOutfitIndexKvp.Value);
+            }
+            if (simDescription.CreatedSim != null)
+            {
+                ((Sims3.Gameplay.UI.HudModel)Sims3.UI.Responder.Instance.HudModel).NotifySimChanged(simDescription.CreatedSim.ObjectId);
+            }
+            simBuilder.Dispose();
         }
 
-        public static void ApplyOverallHairColorsToOutfit(this SimDescription simDescription, OutfitCategories outfitCategory, int outfitIndex, GeneticColor bodyHairColor, GeneticColor eyebrowColor, GeneticColor[] facialHairColors, GeneticColor[] hairColors)
+        public static void ApplyOverallHairColorsToOutfit(this SimDescription simDescription, SimBuilder simBuilder, OutfitCategories outfitCategory, int outfitIndex, GeneticColor bodyHairColor, GeneticColor eyebrowColor, GeneticColor[] facialHairColors, GeneticColor[] hairColors)
         {
-            using (SimBuilder simBuilder = new SimBuilder
-                {
-                    UseCompression = true
-                })
+            simBuilder.Clear();
+            OutfitUtils.SetAutomaticModifiers(simBuilder);
+            OutfitUtils.SetOutfit(simBuilder, simDescription.GetOutfit(outfitCategory, outfitIndex), null);
+            OutfitUtils.InjectBodyHairColor(simBuilder, bodyHairColor.ActiveColor);
+            OutfitUtils.InjectEyeBrowHairColor(simBuilder, eyebrowColor.ActiveColor);
+            OutfitUtils.InjectHairColor(simBuilder, System.Array.ConvertAll(facialHairColors, x => x.ActiveColor), BodyTypes.Beard);
+            OutfitUtils.InjectHairColor(simBuilder, System.Array.ConvertAll(hairColors, x => x.ActiveColor), BodyTypes.Hair);
+            SimOutfit outfit = new SimOutfit(simBuilder.CacheOutfit(string.Format("Rebuilt_{0}_{1}", outfitCategory, outfitIndex)));
+            if (outfitCategory == OutfitCategories.Special)
             {
-                simBuilder.Clear();
-                OutfitUtils.SetAutomaticModifiers(simBuilder);
-                OutfitUtils.SetOutfit(simBuilder, simDescription.GetOutfit(outfitCategory, outfitIndex), null);
-                OutfitUtils.InjectBodyHairColor(simBuilder, bodyHairColor.ActiveColor);
-                OutfitUtils.InjectEyeBrowHairColor(simBuilder, eyebrowColor.ActiveColor);
-                OutfitUtils.InjectHairColor(simBuilder, System.Array.ConvertAll(facialHairColors, x => x.ActiveColor), BodyTypes.Beard);
-                OutfitUtils.InjectHairColor(simBuilder, System.Array.ConvertAll(hairColors, x => x.ActiveColor), BodyTypes.Hair);
-                SimOutfit outfit = new SimOutfit(simBuilder.CacheOutfit(string.Format("Rebuilt_{0}_{1}", outfitCategory, outfitIndex)));
-                if (outfitCategory == OutfitCategories.Special)
-                {
-                    uint key = simDescription.GetSpecialOutfitKeyForIndex(outfitIndex);
-                    simDescription.RemoveSpecialOutfit(key);
-                    simDescription.AddSpecialOutfit(outfit, key);
-                }
-                else
-                {
-                    simDescription.RemoveOutfit(outfitCategory, outfitIndex, true);
-                    simDescription.AddOutfit(outfit, outfitCategory, outfitIndex);
-                } 
-            }   
+                uint key = simDescription.GetSpecialOutfitKeyForIndex(outfitIndex);
+                simDescription.RemoveSpecialOutfit(key);
+                simDescription.AddSpecialOutfit(outfit, key);
+            }
+            else
+            {
+                simDescription.RemoveOutfit(outfitCategory, outfitIndex, true);
+                simDescription.AddOutfit(outfit, outfitCategory, outfitIndex);
+            } 
         }
 
         public static void ClearOriginalOverallHairColors(this SimDescription simDescription)

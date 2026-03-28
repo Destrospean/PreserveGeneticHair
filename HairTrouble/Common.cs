@@ -6,6 +6,8 @@ namespace Destrospean.HairTrouble
 {
     public static class Common
     {
+        public static object Lock = new object();
+
         public static ResourceKey FromS3PIFormatKeyString(string key)
         {
             string[] tgi = key.Replace("0x", "").Split('-');
