@@ -33,6 +33,7 @@ namespace Destrospean.HairTrouble
                 };
             World.sOnWorldLoadFinishedEventHandler += (sender, e) =>
                 {
+                    SimHairGrowth.InitHairGrowthStateMap();
                     foreach (Mirror mirror in Sims3.Gameplay.Queries.GetObjects<Mirror>())
                     {
                         AddInteractions(mirror);
