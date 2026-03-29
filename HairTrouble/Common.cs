@@ -118,20 +118,20 @@ namespace Destrospean.HairTrouble
             OutfitUtils.SetOutfit(simBuilder, outfit, null);
         }
 
-        public static void ReplaceOutfit(this SimDescription simDescription, SimOutfit outfit, OutfitCategories outfitCategory, int outfitIndex)
+        public static void ReplaceOutfit(this SimDescription simDescription, SimOutfit newOutfit, OutfitCategories outfitCategory, int outfitIndex)
         {
-            if (outfit != null)
+            if (newOutfit != null)
             {
                 if (outfitCategory == OutfitCategories.Special)
                 {
                     uint key = simDescription.GetSpecialOutfitKeyForIndex(outfitIndex);
                     simDescription.RemoveSpecialOutfit(key);
-                    simDescription.AddSpecialOutfit(outfit, key);
+                    simDescription.AddSpecialOutfit(newOutfit, key);
                 }
                 else
                 {
                     simDescription.RemoveOutfit(outfitCategory, outfitIndex, true);
-                    simDescription.AddOutfit(outfit, outfitCategory, outfitIndex);
+                    simDescription.AddOutfit(newOutfit, outfitCategory, outfitIndex);
                 }
             }
         }
