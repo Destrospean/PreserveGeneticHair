@@ -28,7 +28,7 @@ namespace Destrospean.HairTrouble
                 {
                     simDescription.AddOutfit(new SimOutfit(simDescription.CreatedSim.CurrentOutfit.Key), tempOutfitCategory);
                     simDescription.CreatedSim.SwitchToOutfitWithoutSpin(tempOutfitCategory, tempOutfitIndex);
-                    simDescription.ReplaceOutfit(outfitFunc(simBuilder, lastOutfitCategory, lastOutfitIndex), lastOutfitCategory, lastOutfitIndex);
+                    simDescription.ReplaceOutfit(lastOutfitCategory, lastOutfitIndex, outfitFunc(simBuilder, lastOutfitCategory, lastOutfitIndex));
                     using (Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper switchOutfitHelper = new Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper(simDescription.CreatedSim, Sims3.Gameplay.Actors.Sim.ClothesChangeReason.Force, lastOutfitCategory, lastOutfitIndex, false))
                     {
                         simDescription.CreatedSim.SwitchToOutfitWithSpin(switchOutfitHelper);
@@ -50,7 +50,7 @@ namespace Destrospean.HairTrouble
                 {
                     if (simDescription.CreatedSim == null || outfitCategory != lastOutfitCategory || i != lastOutfitIndex || !spin)
                     {
-                        simDescription.ReplaceOutfit(outfitFunc(simBuilder, outfitCategory, i), outfitCategory, i);
+                        simDescription.ReplaceOutfit(outfitCategory, i, outfitFunc(simBuilder, outfitCategory, i));
                     }
                 }
             }
@@ -118,7 +118,7 @@ namespace Destrospean.HairTrouble
             OutfitUtils.SetOutfit(simBuilder, outfit, null);
         }
 
-        public static void ReplaceOutfit(this SimDescription simDescription, SimOutfit newOutfit, OutfitCategories outfitCategory, int outfitIndex)
+        public static void ReplaceOutfit(this SimDescription simDescription, OutfitCategories outfitCategory, int outfitIndex, SimOutfit newOutfit)
         {
             if (newOutfit != null)
             {
