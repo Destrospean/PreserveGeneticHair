@@ -8,8 +8,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
-    <RootNamespace>Destrospean.PreserveGeneticHair</RootNamespace>
-    <AssemblyName>PreserveGeneticHair</AssemblyName>
+    <RootNamespace>Destrospean.HairTrouble</RootNamespace>
+    <AssemblyName>HairTrouble</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <NoWin32Manifest>False</NoWin32Manifest>
@@ -43,14 +43,22 @@
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimHairData.cs" />
-    <Compile Include="Interactions.cs" />
     <Compile Include="Tasks.cs" />
-    <Compile Include="Main.cs" />
     <Compile Include="Replacements.cs" />
     <Compile Include="Tuning.cs" />
+    <Compile Include="SimHairData.cs" />
+    <Compile Include="SimHairGrowth.cs" />
+    <Compile Include="SimHairColors.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Common.cs" />
+    <Compile Include="Interactions.cs" />
+    <Compile Include="Main.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib">

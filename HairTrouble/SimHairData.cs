@@ -1,0 +1,27 @@
+﻿using System.Collections.Generic;
+using Sims3.Gameplay.CAS;
+using Sims3.SimIFace;
+
+namespace Destrospean.PreserveGeneticHair
+{
+    public static class SimHairData
+    {
+        [PersistableStatic(true)]
+        public static Dictionary<ulong, HairTrouble.HairGrowthStates> GrowthStates = new Dictionary<ulong, HairTrouble.HairGrowthStates>();
+
+        [PersistableStatic(true)]
+        public static Dictionary<ulong, GeneticColor> OriginalBodyHairColors = new Dictionary<ulong, GeneticColor>();
+
+        [PersistableStatic(true)]
+        public static Dictionary<ulong, GeneticColor> OriginalEyebrowColors = new Dictionary<ulong, GeneticColor>();
+
+        [PersistableStatic(true)]
+        public static Dictionary<ulong, GeneticColor[]> OriginalFacialHairColors = new Dictionary<ulong, GeneticColor[]>();
+
+        [PersistableStatic(true)]
+        public static Dictionary<ulong, GeneticColor[]> OriginalHairColors = new Dictionary<ulong, GeneticColor[]>();
+
+        [PersistableStatic(true)]
+        public static Dictionary<ulong, bool> RootsShowing = new Dictionary<ulong, bool>();
+    }
+}

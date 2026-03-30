@@ -1,4 +1,5 @@
 ﻿using System;
+using Destrospean.PreserveGeneticHair;
 using MonoPatcherLib;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.EventSystem;
@@ -13,7 +14,7 @@ namespace System.Runtime.CompilerServices
     }
 }
 
-namespace Destrospean.PreserveGeneticHair
+namespace Destrospean.HairTrouble
 {
     [Plugin]
     public class Main
@@ -32,6 +33,7 @@ namespace Destrospean.PreserveGeneticHair
                 };
             World.sOnWorldLoadFinishedEventHandler += (sender, e) =>
                 {
+                    SimHairGrowth.InitHairGrowthStateMap();
                     foreach (Mirror mirror in Sims3.Gameplay.Queries.GetObjects<Mirror>())
                     {
                         AddInteractions(mirror);
@@ -47,7 +49,7 @@ namespace Destrospean.PreserveGeneticHair
                                 Sim sim = evt.TargetObject as Sim;
                                 if (sim != null)
                                 {
-                                    sim.SimDescription.ClearOriginalHairColors();
+                                    sim.SimDescription.ClearOriginalOverallHairColors();
                                 }
                             }
                             catch (Exception ex)
@@ -64,7 +66,7 @@ namespace Destrospean.PreserveGeneticHair
                                 if (sim != null)
                                 {
                                     AddInteractions(sim);
-                                    sim.SimDescription.InitOriginalHairColors();
+                                    sim.SimDescription.InitOriginalOverallHairColors();
                                 }
                             }
                             catch (Exception ex)
@@ -81,7 +83,7 @@ namespace Destrospean.PreserveGeneticHair
                                 {
                                     foreach (Sim sim in Sims3.Gameplay.Queries.GetObjects<Sim>())
                                     {
-                                        sim.SimDescription.InitOriginalHairColors();
+                                        sim.SimDescription.InitOriginalOverallHairColors();
                                     }
                                 }
                             }
@@ -113,8 +115,10 @@ namespace Destrospean.PreserveGeneticHair
 
         static void AddInteractions(Sim sim)
         {
-            if (!sim.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.ResetOriginalHair.Singleton.GetType()))
+            if (!sim.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.DecrementHairGrowthState.Singleton.GetType()))
             {
+                sim.AddInteraction(Interactions.DecrementHairGrowthState.Singleton);
+                sim.AddInteraction(Interactions.IncrementHairGrowthState.Singleton);
                 sim.AddInteraction(Interactions.ResetOriginalHair.Singleton);
             }
         }

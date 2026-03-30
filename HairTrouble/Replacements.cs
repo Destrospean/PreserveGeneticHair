@@ -4,7 +4,7 @@ using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Socializing;
 using Sims3.SimIFace;
 
-namespace Destrospean.PreserveGeneticHair
+namespace Destrospean.HairTrouble
 {
     public static class Replacements
     {
