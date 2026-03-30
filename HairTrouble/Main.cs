@@ -33,7 +33,7 @@ namespace Destrospean.HairTrouble
                 };
             World.sOnWorldLoadFinishedEventHandler += (sender, e) =>
                 {
-                    //SimHairGrowth.InitHairGrowthStateMap();
+                    SimHairGrowth.InitHairGrowthStateMap();
                     foreach (Mirror mirror in Sims3.Gameplay.Queries.GetObjects<Mirror>())
                     {
                         AddInteractions(mirror);
@@ -115,10 +115,10 @@ namespace Destrospean.HairTrouble
 
         static void AddInteractions(Sim sim)
         {
-            if (!sim.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.ResetOriginalHair.Singleton.GetType()))
+            if (!sim.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.DecrementHairGrowthState.Singleton.GetType()))
             {
-                //sim.AddInteraction(Interactions.DecrementHairGrowthState.Singleton);
-                //sim.AddInteraction(Interactions.IncrementHairGrowthState.Singleton);
+                sim.AddInteraction(Interactions.DecrementHairGrowthState.Singleton);
+                sim.AddInteraction(Interactions.IncrementHairGrowthState.Singleton);
                 sim.AddInteraction(Interactions.ResetOriginalHair.Singleton);
             }
         }
