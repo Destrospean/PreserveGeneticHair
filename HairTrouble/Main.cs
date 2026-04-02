@@ -122,11 +122,7 @@ namespace Destrospean.HairTrouble
 
         static void AddInteractions(Sim sim)
         {
-<<<<<<< Updated upstream
-            if (sim != null && !sim.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.ResetOriginalHair.Singleton.GetType()))
-=======
-            if (sim != null && !sim.Interactions.Exists(x => x.InteractionDefinition.GetType() == Interactions.DecrementHairGrowthState.Singleton.GetType()))
->>>>>>> Stashed changes
+            if (sim != null && !sim.Interactions.Exists(x => x.InteractionDefinition.GetType() == Interactions.ResetOriginalHair.Singleton.GetType()))
             {
                 //sim.AddInteraction(Interactions.DecrementHairGrowthState.Singleton);
                 //sim.AddInteraction(Interactions.IncrementHairGrowthState.Singleton);
