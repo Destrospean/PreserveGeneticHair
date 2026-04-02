@@ -107,7 +107,7 @@ namespace Destrospean.HairTrouble
 
         static void AddInteractions(Mirror mirror)
         {
-            if (!mirror.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.RemoveHairDye.Singleton.GetType()))
+            if (mirror != null && !mirror.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.RemoveHairDye.Singleton.GetType()))
             {
                 mirror.AddInteraction(Interactions.RemoveHairDye.Singleton);
             }
@@ -115,7 +115,7 @@ namespace Destrospean.HairTrouble
 
         static void AddInteractions(Sim sim)
         {
-            if (!sim.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.ResetOriginalHair.Singleton.GetType()))
+            if (sim != null && !sim.Interactions.Exists(interaction => interaction.InteractionDefinition.GetType() == Interactions.ResetOriginalHair.Singleton.GetType()))
             {
                 //sim.AddInteraction(Interactions.DecrementHairGrowthState.Singleton);
                 //sim.AddInteraction(Interactions.IncrementHairGrowthState.Singleton);
