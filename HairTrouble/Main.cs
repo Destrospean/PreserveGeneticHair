@@ -42,6 +42,13 @@ namespace Destrospean.HairTrouble
                     {
                         AddInteractions(sim);
                     }
+                    if (SimHairData.OriginalHairColors.Count == 0 && Sims3.Gameplay.CAS.Household.ActiveHousehold != null)
+                    {
+                        foreach (Sim sim in Sims3.Gameplay.Queries.GetObjects<Sim>())
+                        {
+                            sim.SimDescription.InitOriginalOverallHairColors();
+                        }
+                    }
                     sSimDescriptionDisposedListener = EventTracker.AddListener(EventTypeId.kSimDescriptionDisposed, evt =>
                         {
                             try
