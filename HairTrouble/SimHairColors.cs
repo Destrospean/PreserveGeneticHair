@@ -31,7 +31,7 @@ namespace Destrospean.HairTrouble
             OutfitUtils.InjectEyeBrowHairColor(simBuilder, eyebrowColor.ActiveColor);
             OutfitUtils.InjectHairColor(simBuilder, System.Array.ConvertAll(facialHairColors, x => x.ActiveColor), BodyTypes.Beard);
             OutfitUtils.InjectHairColor(simBuilder, System.Array.ConvertAll(hairColors, x => x.ActiveColor), BodyTypes.Hair);
-            return new SimOutfit(simBuilder.CacheOutfit(string.Format("Rebuilt_{0}_{1}", outfitCategory, outfitIndex)));
+            return new SimOutfit(simBuilder.CacheOutfit(string.Format("ApplyHairColors_{0}_{1}_{2}", simDescription.SimDescriptionId, outfitCategory, outfitIndex)));
         }
 
         public static void ClearOriginalOverallHairColors(this SimDescription simDescription)
@@ -68,24 +68,24 @@ namespace Destrospean.HairTrouble
 
         public static bool HasOriginalBodyHairColor(this SimDescription simDescription)
         {
-            return simDescription.GetOriginalBodyHairColor().ActiveColor == simDescription.BodyHairColor.ActiveColor;
+            return simDescription.GetOriginalBodyHairColor().ActiveColor == simDescription.ActiveBodyHairColor;
         }
 
         public static bool HasOriginalEyebrowColor(this SimDescription simDescription)
         {
-            return simDescription.GetOriginalEyebrowColor().ActiveColor == simDescription.EyebrowColor.ActiveColor;
+            return simDescription.GetOriginalEyebrowColor().ActiveColor == simDescription.ActiveEyebrowColor;
         }
 
         public static bool HasOriginalFacialHairColors(this SimDescription simDescription)
         {
             int tempIndex = 0;
-            return System.Array.TrueForAll(simDescription.GetOriginalFacialHairColors(), x => x.ActiveColor == simDescription.FacialHairColors[tempIndex++].ActiveColor);
+            return System.Array.TrueForAll(simDescription.GetOriginalFacialHairColors(), x => x.ActiveColor == simDescription.ActiveFacialHairColors[tempIndex++]);
         }
 
         public static bool HasOriginalHairColors(this SimDescription simDescription)
         {
             int tempIndex = 0;
-            return System.Array.TrueForAll(simDescription.GetOriginalHairColors(), x => x.ActiveColor == simDescription.HairColors[tempIndex++].ActiveColor);
+            return System.Array.TrueForAll(simDescription.GetOriginalHairColors(), x => x.ActiveColor == simDescription.ActiveHairColors[tempIndex++]);
         }
 
         public static bool HasOriginalOverallHairColors(this SimDescription simDescription)

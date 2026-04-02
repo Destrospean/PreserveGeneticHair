@@ -46,7 +46,12 @@ namespace Destrospean.HairTrouble
             }
             foreach (OutfitCategories outfitCategory in simDescription.ListOfCategories)
             {
-                for (int i = simDescription.GetOutfitCount(outfitCategory) - 1; i > -1 ; i--)
+                System.Collections.ArrayList outfits = simDescription.Outfits[outfitCategory] as System.Collections.ArrayList;
+                if (outfits == null)
+                {
+                    continue;
+                }
+                for (int i = outfits.Count - 1; i > -1 ; i--)
                 {
                     if (simDescription.CreatedSim == null || outfitCategory != lastOutfitCategory || i != lastOutfitIndex || !spin)
                     {
@@ -62,13 +67,10 @@ namespace Destrospean.HairTrouble
                     simDescription.mSpecialOutfitIndices.Add(specialOutfitIndexKvp.Key, specialOutfitIndexKvp.Value);
                 }
             }
-            if (simDescription.CreatedSim != null)
+            if (simDescription.CreatedSim != null && !spin)
             {
-                ((Sims3.Gameplay.UI.HudModel)Sims3.UI.Responder.Instance.HudModel).NotifySimChanged(simDescription.CreatedSim.ObjectId);
-                if (!spin)
-                {
-                    simDescription.CreatedSim.RefreshCurrentOutfit(false);
-                }
+                simDescription.CreatedSim.UpdateOutfitInfo();
+                simDescription.CreatedSim.RefreshCurrentOutfit(false);
             }
             simBuilder.Dispose();
         }
@@ -120,7 +122,7 @@ namespace Destrospean.HairTrouble
 
         public static void ReplaceOutfit(this SimDescription simDescription, OutfitCategories outfitCategory, int outfitIndex, SimOutfit newOutfit)
         {
-            if (newOutfit != null)
+            if (newOutfit != null && newOutfit.IsValid)
             {
                 if (outfitCategory == OutfitCategories.Special)
                 {
