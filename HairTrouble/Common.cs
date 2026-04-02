@@ -28,12 +28,16 @@ namespace Destrospean.HairTrouble
                 {
                     simDescription.AddOutfit(new SimOutfit(simDescription.CreatedSim.CurrentOutfit.Key), tempOutfitCategory);
                     simDescription.CreatedSim.SwitchToOutfitWithoutSpin(tempOutfitCategory, tempOutfitIndex);
-                    simDescription.ReplaceOutfit(lastOutfitCategory, lastOutfitIndex, outfitFunc(simBuilder, lastOutfitCategory, lastOutfitIndex));
-                    using (Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper switchOutfitHelper = new Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper(simDescription.CreatedSim, Sims3.Gameplay.Actors.Sim.ClothesChangeReason.Force, lastOutfitCategory, lastOutfitIndex, false))
+                    SimOutfit outfit = outfitFunc(simBuilder, lastOutfitCategory, lastOutfitIndex);
+                    if (outfit.IsValid)
                     {
-                        simDescription.CreatedSim.SwitchToOutfitWithSpin(switchOutfitHelper);
+                        simDescription.ReplaceOutfit(lastOutfitCategory, lastOutfitIndex, outfit);
+                        using (Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper switchOutfitHelper = new Sims3.Gameplay.Actors.Sim.SwitchOutfitHelper(simDescription.CreatedSim, Sims3.Gameplay.Actors.Sim.ClothesChangeReason.Force, lastOutfitCategory, lastOutfitIndex, false))
+                        {
+                            simDescription.CreatedSim.SwitchToOutfitWithSpin(switchOutfitHelper);
+                        }
+                        simDescription.RemoveOutfit(tempOutfitCategory, tempOutfitIndex, true);
                     }
-                    simDescription.RemoveOutfit(tempOutfitCategory, tempOutfitIndex, true);
                 }
             }
             Dictionary<uint, int> specialOutfitIndices = new Dictionary<uint, int>();
