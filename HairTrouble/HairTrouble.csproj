@@ -59,6 +59,8 @@
     <Compile Include="Common.cs" />
     <Compile Include="Interactions.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="OutfitExtensions.cs" />
+    <Compile Include="S3PIResourceUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib">
