@@ -14,16 +14,24 @@ namespace Destrospean.HairTrouble
 
         public class DecrementHairGrowthState : ImmediateInteraction<Sim, Sim>
         {
-            public static InteractionDefinition Singleton = new Definition();
+            const string kLocalizationKey = kLocalizationPath + "/DecrementHairGrowthState";
 
-            public const string sLocalizationKey = kLocalizationPath + "/DecrementHairGrowthState";
+            public static InteractionDefinition Singleton = new Definition();
 
             [DoesntRequireTuning]
             public class Definition : ImmediateInteractionDefinition<Sim, Sim, DecrementHairGrowthState>
             {
-                public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair interaction)
+                public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair iop)
                 {
-                    return Localization.LocalizeString(target.IsFemale, sLocalizationKey + ":Name");
+                    return Localization.LocalizeString(target.IsFemale, kLocalizationKey + ":Name");
+                }
+
+                public override string[] GetPath(bool isFemale)
+                {
+                    return new string[]
+                    {
+                        Localization.LocalizeString(isFemale, kLocalizationPath + ":Path")
+                    };
                 }
 
                 public override bool Test(Sim actor, Sim target, bool isAutonomous, ref Sims3.SimIFace.GreyedOutTooltipCallback greyedOutTooltipCallback)
@@ -41,16 +49,24 @@ namespace Destrospean.HairTrouble
 
         public class IncrementHairGrowthState : ImmediateInteraction<Sim, Sim>
         {
-            public static InteractionDefinition Singleton = new Definition();
+            const string kLocalizationKey = kLocalizationPath + "/IncrementHairGrowthState";
 
-            public const string sLocalizationKey = kLocalizationPath + "/IncrementHairGrowthState";
+            public static InteractionDefinition Singleton = new Definition();
 
             [DoesntRequireTuning]
             public class Definition : ImmediateInteractionDefinition<Sim, Sim, IncrementHairGrowthState>
             {
-                public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair interaction)
+                public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair iop)
                 {
-                    return Localization.LocalizeString(target.IsFemale, sLocalizationKey + ":Name");
+                    return Localization.LocalizeString(target.IsFemale, kLocalizationKey + ":Name");
+                }
+
+                public override string[] GetPath(bool isFemale)
+                {
+                    return new string[]
+                    {
+                        Localization.LocalizeString(isFemale, kLocalizationPath + ":Path")
+                    };
                 }
 
                 public override bool Test(Sim actor, Sim target, bool isAutonomous, ref Sims3.SimIFace.GreyedOutTooltipCallback greyedOutTooltipCallback)
@@ -68,15 +84,23 @@ namespace Destrospean.HairTrouble
 
         public class RemoveHairDye : Interaction<Sim, IMirror>
         {
-            public static InteractionDefinition Singleton = new Definition();
+            const string kLocalizationKey = kLocalizationPath + "/RemoveHairDye";
 
-            public const string sLocalizationKey = kLocalizationPath + "/RemoveHairDye";
+            public static InteractionDefinition Singleton = new Definition();
 
             public class Definition : InteractionDefinition<Sim, IMirror, RemoveHairDye>
             {
-                public override string GetInteractionName(Sim actor, IMirror target, InteractionObjectPair interaction)
+                public override string GetInteractionName(Sim actor, IMirror target, InteractionObjectPair iop)
                 {
-                    return Localization.LocalizeString(actor.IsFemale, sLocalizationKey + ":Name");
+                    return Localization.LocalizeString(actor.IsFemale, kLocalizationKey + ":Name");
+                }
+
+                public override string[] GetPath(bool isFemale)
+                {
+                    return new string[]
+                    {
+                        Localization.LocalizeString(isFemale, kLocalizationPath + ":Path")
+                    };
                 }
 
                 public override bool Test(Sim actor, IMirror target, bool isAutonomous, ref Sims3.SimIFace.GreyedOutTooltipCallback greyedOutTooltipCallback)
@@ -116,16 +140,24 @@ namespace Destrospean.HairTrouble
 
         public class ResetOriginalHair : ImmediateInteraction<Sim, Sim>
         {
-            public static InteractionDefinition Singleton = new Definition();
+            const string kLocalizationKey = kLocalizationPath + "/ResetOriginalHair";
 
-            public const string sLocalizationKey = kLocalizationPath + "/ResetOriginalHair";
+            public static InteractionDefinition Singleton = new Definition();
 
             [DoesntRequireTuning]
             public class Definition : ImmediateInteractionDefinition<Sim, Sim, ResetOriginalHair>
             {
-                public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair interaction)
+                public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair iop)
                 {
-                    return Localization.LocalizeString(target.IsFemale, sLocalizationKey + ":Name");
+                    return Localization.LocalizeString(target.IsFemale, kLocalizationKey + ":Name");
+                }
+
+                public override string[] GetPath(bool isFemale)
+                {
+                    return new string[]
+                    {
+                        Localization.LocalizeString(isFemale, kLocalizationPath + ":Path")
+                    };
                 }
 
                 public override bool Test(Sim actor, Sim target, bool isAutonomous, ref Sims3.SimIFace.GreyedOutTooltipCallback greyedOutTooltipCallback)
