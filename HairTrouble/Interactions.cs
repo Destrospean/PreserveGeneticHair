@@ -14,16 +14,16 @@ namespace Destrospean.HairTrouble
 
         public class DecrementHairGrowthState : ImmediateInteraction<Sim, Sim>
         {
-            const string kLocalizationKey = kLocalizationPath + "/DecrementHairGrowthState";
-
             public static InteractionDefinition Singleton = new Definition();
+
+            public const string sLocalizationKey = kLocalizationPath + "/DecrementHairGrowthState";
 
             [DoesntRequireTuning]
             public class Definition : ImmediateInteractionDefinition<Sim, Sim, DecrementHairGrowthState>
             {
                 public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair iop)
                 {
-                    return Localization.LocalizeString(target.IsFemale, kLocalizationKey + ":Name");
+                    return Localization.LocalizeString(target.IsFemale, sLocalizationKey + ":Name");
                 }
 
                 public override string[] GetPath(bool isFemale)
@@ -49,16 +49,16 @@ namespace Destrospean.HairTrouble
 
         public class IncrementHairGrowthState : ImmediateInteraction<Sim, Sim>
         {
-            const string kLocalizationKey = kLocalizationPath + "/IncrementHairGrowthState";
-
             public static InteractionDefinition Singleton = new Definition();
+
+            public const string sLocalizationKey = kLocalizationPath + "/IncrementHairGrowthState";
 
             [DoesntRequireTuning]
             public class Definition : ImmediateInteractionDefinition<Sim, Sim, IncrementHairGrowthState>
             {
                 public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair iop)
                 {
-                    return Localization.LocalizeString(target.IsFemale, kLocalizationKey + ":Name");
+                    return Localization.LocalizeString(target.IsFemale, sLocalizationKey + ":Name");
                 }
 
                 public override string[] GetPath(bool isFemale)
@@ -84,15 +84,15 @@ namespace Destrospean.HairTrouble
 
         public class RemoveHairDye : Interaction<Sim, IMirror>
         {
-            const string kLocalizationKey = kLocalizationPath + "/RemoveHairDye";
-
             public static InteractionDefinition Singleton = new Definition();
+
+            public const string sLocalizationKey = kLocalizationPath + "/RemoveHairDye";
 
             public class Definition : InteractionDefinition<Sim, IMirror, RemoveHairDye>
             {
                 public override string GetInteractionName(Sim actor, IMirror target, InteractionObjectPair iop)
                 {
-                    return Localization.LocalizeString(actor.IsFemale, kLocalizationKey + ":Name");
+                    return Localization.LocalizeString(actor.IsFemale, sLocalizationKey + ":Name");
                 }
 
                 public override string[] GetPath(bool isFemale)
@@ -140,16 +140,16 @@ namespace Destrospean.HairTrouble
 
         public class ResetOriginalHair : ImmediateInteraction<Sim, Sim>
         {
-            const string kLocalizationKey = kLocalizationPath + "/ResetOriginalHair";
-
             public static InteractionDefinition Singleton = new Definition();
+
+            public const string sLocalizationKey = kLocalizationPath + "/ResetOriginalHair";
 
             [DoesntRequireTuning]
             public class Definition : ImmediateInteractionDefinition<Sim, Sim, ResetOriginalHair>
             {
                 public override string GetInteractionName(Sim actor, Sim target, InteractionObjectPair iop)
                 {
-                    return Localization.LocalizeString(target.IsFemale, kLocalizationKey + ":Name");
+                    return Localization.LocalizeString(target.IsFemale, sLocalizationKey + ":Name");
                 }
 
                 public override string[] GetPath(bool isFemale)
