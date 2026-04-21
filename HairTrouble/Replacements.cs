@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MonoPatcherLib;
 using Sims3.Gameplay.CAS;
 using Sims3.Gameplay.Socializing;
 using Sims3.SimIFace;
@@ -8,7 +7,7 @@ namespace Destrospean.HairTrouble
 {
     public static class Replacements
     {
-        [ReplaceMethod(typeof(Genetics), "InheritHairColor")]
+        [MonoPatcherLib.ReplaceMethod(typeof(Genetics), "InheritHairColor")]
         public static Color[] InheritHairColor(Sims3.SimIFace.CAS.SimBuilder target, SimDescription[] parentSims, System.Random random)
         {
             List<Genealogy> genealogies = new List<Genealogy>();

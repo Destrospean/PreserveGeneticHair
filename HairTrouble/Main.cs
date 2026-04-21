@@ -1,6 +1,5 @@
 ﻿using System;
 using Destrospean.PreserveGeneticHair;
-using MonoPatcherLib;
 using Sims3.Gameplay.Actors;
 using Sims3.Gameplay.EventSystem;
 using Sims3.Gameplay.Objects.Decorations;
@@ -8,7 +7,7 @@ using Sims3.SimIFace;
 
 namespace Destrospean.HairTrouble
 {
-    [Plugin]
+    [MonoPatcherLib.Plugin]
     public class Main
     {
         static Main()
