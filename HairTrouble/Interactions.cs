@@ -28,7 +28,7 @@ namespace Destrospean.HairTrouble
 
                 public override string[] GetPath(bool isFemale)
                 {
-                    return new string[]
+                    return new[]
                     {
                         Localization.LocalizeString(isFemale, kLocalizationPath + ":Path")
                     };
@@ -63,7 +63,7 @@ namespace Destrospean.HairTrouble
 
                 public override string[] GetPath(bool isFemale)
                 {
-                    return new string[]
+                    return new[]
                     {
                         Localization.LocalizeString(isFemale, kLocalizationPath + ":Path")
                     };
@@ -97,7 +97,7 @@ namespace Destrospean.HairTrouble
 
                 public override string[] GetPath(bool isFemale)
                 {
-                    return new string[]
+                    return new[]
                     {
                         Localization.LocalizeString(isFemale, kLocalizationPath + ":Path")
                     };
@@ -154,7 +154,7 @@ namespace Destrospean.HairTrouble
 
                 public override string[] GetPath(bool isFemale)
                 {
-                    return new string[]
+                    return new[]
                     {
                         Localization.LocalizeString(isFemale, kLocalizationPath + ":Path")
                     };
